@@ -4,7 +4,7 @@ import { verify, VerifyErrors } from "jsonwebtoken";
 // TODO: Missing imports - comment out until modules are available
 // import { isTest } from "../js-utils/env.utils";
 // import { base64 } from "../js-utils/encrypt";
-import { UserContext, UserPayload } from "./auth.middleware";
+import { UserPayload } from "./auth.middleware";
 
 /** Checks if token is set and appends the user object
  else continue with the request */
@@ -41,14 +41,7 @@ export const currentUser = async (req: Request, res: Response, next: NextFunctio
         };
       }
 
-      if (req.appUser) {
-        // Set the user context
-        UserContext.with(req.appUser, () => {
-          next();
-        });
-      } else {
-        next();
-      }
+      next();
     });
   } catch (error) {
     next();

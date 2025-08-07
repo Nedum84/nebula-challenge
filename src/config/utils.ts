@@ -20,7 +20,7 @@ export type UserConf = {
 
 export const getUserConfig = async (params: {
   userId?: string;
-  device?: UserPayload["device"];
+  device?: any; // Simplified since device is not in our current UserPayload interface
 }) => {
   const isDeviceWeb = params.device?.device_type === "web";
   const _config: UserConf = {
