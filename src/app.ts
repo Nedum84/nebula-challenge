@@ -12,6 +12,7 @@ import { errorHandler } from "./middlewares";
 import { rateLimiter } from "./middlewares/rate.limiter";
 // import { isProd } from "./js-utils/env.utils"; // Removed - module not found
 import { authRoutes } from "./routes/auth.route";
+import { leaderboardRoutes } from "./routes/leaderboard.route";
 
 var xss = require("xss-clean");
 
@@ -72,6 +73,7 @@ app.get("/", (req, res) => {
 
 // Routing....
 app.use("/v1/auth", authRoutes);
+app.use("/v1/leaderboard", leaderboardRoutes);
 app.use("/v1/[routes]" /** Routes HERE */);
 
 app.all("*", async (req, res) => {

@@ -1,12 +1,12 @@
-service: iclass
+service: nebula-logix-api
 useDotenv: false # Load environment variables from .env files (default: false)
 configValidationMode: off # error | warn(default) | off
 
 # Using config serverless file @ https://github.com/andymac4182/serverless_example/blob/master/src/serverless.yml
 custom:
-  awsId: ${aws:accountId, '715828590857'}
+  awsId: ${aws:accountId, '893130088846'}
   stage: ${opt:stage, self:provider.stage}
-  awsRegion: ${opt:region, 'eu-west-2'}
+  awsRegion: ${opt:region, 'eu-north-1'}
   bucketName: storage-${self:service}-${self:custom.stage}-${self:custom.awsId}
   lambdaFuncPrefix: ${self:service}-${self:custom.stage} #e.g iclass-dev
   jobLambdaFuncName: ${self:custom.lambdaFuncPrefix}-job #job is the function name e.g iclass-dev-job
@@ -16,10 +16,9 @@ custom:
   apiLambdaFuncArn: ${self:custom.lambdaFuncArnPrefix}:${self:custom.apiLambdaFuncName} #e.g arn:aws:lambda:eu-west-2:715828590857:function:iclass-dev-api
   role: arn:aws:iam::${self:custom.awsId}:role/CustomLambdaRole
   domain:
-    # "715828590857": dev.iclass.school #yeah
-    "715828590857": iclass.school
+    "893130088846": nebula.logix.com
   vpc:
-    "715828590857": "" #Without VPC
+    "893130088846": "" #Without VPC
     # "715828590857":
     #   securityGroupIds:
     #     - sg-06b64c0038110affc

@@ -1,16 +1,26 @@
-# Nebula Logix Authentication API
+# Nebula Logix Challenge API
 
-A robust authentication API built with Node.js, TypeScript, and Express.js for the Nebula Logix Full Stack Engineer challenge.
+An AWS Lambda-compatible Full Stack Node.js application built with TypeScript for the Nebula Logix Full Stack Engineer challenge, featuring AWS Cognito authentication, DynamoDB leaderboard storage, and WebSocket notifications.
 
-## Features
+## 🎯 Challenge Requirements Fulfilled
 
-✅ **User Registration** - Secure user account creation  
-✅ **User Authentication** - JWT-based login system  
-✅ **Password Security** - bcrypt hashing with salt rounds  
+✅ **AWS Cognito Authentication** - USER_PASSWORD_AUTH flow with required attributes  
+✅ **DynamoDB Score Storage** - Leaderboard table with proper schema  
+✅ **WebSocket Notifications** - Real-time notifications for scores > 1000  
+✅ **Leaderboard Retrieval** - Top scores endpoint as requested  
+✅ **AWS Lambda Compatible** - Serverless Framework ready  
 ✅ **Input Validation** - Comprehensive validation using Joi  
 ✅ **Error Handling** - Consistent error responses  
 ✅ **TypeScript** - Full type safety throughout  
-✅ **Clean Architecture** - Organized into controllers, services, and validation layers  
+✅ **Clean Architecture** - Organized into controllers, services, and validation layers
+
+## 🏗️ AWS Services Used
+
+- **AWS Cognito**: User authentication and management
+- **Amazon DynamoDB**: Leaderboard score storage  
+- **API Gateway WebSocket**: Real-time notifications
+- **AWS Lambda**: Serverless compute
+- **API Gateway**: HTTP API endpoints  
 
 ## Quick Start
 
@@ -50,21 +60,30 @@ npm run dev
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
-| POST | `/v1/auth/register` | Register new user | No |
-| POST | `/v1/auth/login` | User login | No |
+| POST | `/v1/auth/register` | Register with Cognito | No |
+| POST | `/v1/auth/confirm` | Confirm email registration | No |
+| POST | `/v1/auth/login` | User login (Cognito) | No |
 | GET | `/v1/auth/profile` | Get user profile | Yes |
-| GET | `/v1/auth/me` | Get user profile (alias) | Yes |
+| POST | `/v1/leaderboard/submit` | Submit score to DynamoDB | Yes |
+| GET | `/v1/leaderboard` | Get leaderboard | No |
+| GET | `/v1/leaderboard/top` | Get top 1 scores | No |
+| GET | `/v1/leaderboard/user/scores` | Get user scores | Yes |
+| GET | `/v1/leaderboard/user/best` | Get user best score | Yes |
 
 ## Testing the API
 
 ### Automated Tests
 
-Run the included test script:
+Run the comprehensive challenge test script:
 ```bash
-node test-api.js
+node test-challenge-api.js
 ```
 
-This will test all endpoints automatically and show you the results.
+This will test all challenge requirements including:
+- AWS Cognito authentication flow
+- Score submission to DynamoDB
+- WebSocket notifications for high scores
+- Leaderboard retrieval endpoints
 
 ### Manual Testing
 

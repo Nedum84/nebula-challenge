@@ -18,6 +18,19 @@ const envVarsSchema = Joi.object()
     JWT_REFRESH_EXPIRATION_DAYS: Joi.number()
       .default(90)
       .description("days after which refresh tokens expire"),
+    
+    // AWS Cognito Configuration
+    COGNITO_USER_POOL_ID: Joi.string().default("eu-north-1_example"),
+    COGNITO_CLIENT_ID: Joi.string().default("54p32d5n5j5m2t0gt45e9og8vo"),
+    COGNITO_CLIENT_SECRET: Joi.string().default("dnel7s515mgqk74rurtt1rhqsb0p21kgmu1nf1jdlcfvo04lvde"),
+    
+    // DynamoDB Configuration
+    DYNAMODB_LEADERBOARD_TABLE: Joi.string().default("leaderboard"),
+    DYNAMODB_LEADERBOARD_ARN: Joi.string().default("arn:aws:dynamodb:eu-north-1:893130088846:table/leaderboard"),
+    
+    // WebSocket Configuration
+    WEBSOCKET_URL: Joi.string().default("wss://gdjtdhxwkf.execute-api.eu-north-1.amazonaws.com/production/"),
+    WEBSOCKET_CONNECTION_URL: Joi.string().default("https://gdjtdhxwkf.execute-api.eu-north-1.amazonaws.com/production/@connections"),
     DB_NAME: Joi.string().default("db-name"),
     DB_USERNAME: Joi.string().default("postgres"),
     DB_PASSWORD: Joi.string().default("1223"),
@@ -40,6 +53,9 @@ const envVarsSchema = Joi.object()
     AWS_S3_ICS_UPLOAD_PATH: Joi.string().default("ics"),
     AWS_S3_OTHERS_UPLOAD_PATH: Joi.string().default("others"),
 
+    AWS_ACCESS_KEY_ID: Joi.string().default("AKIA474VTUGHK62Y2HHT"),
+    AWS_SECRET_ACCESS_KEY: Joi.string().default("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"),
+    
     AWS_S3_ACCESS_KEY_ID: Joi.string(),
     AWS_S3_SECRET_ACCESS_KEY: Joi.string(),
 
@@ -204,6 +220,19 @@ export default Object.freeze({
   AWS_REGION: envVars.AWS_REGION,
   AWS_S3_DISTRIBUTION: envVars.AWS_S3_DISTRIBUTION,
   CLOUDFRONT_ASSETS: envVars.CLOUDFRONT_ASSETS,
+  
+  // AWS Cognito
+  COGNITO_USER_POOL_ID: envVars.COGNITO_USER_POOL_ID,
+  COGNITO_CLIENT_ID: envVars.COGNITO_CLIENT_ID,
+  COGNITO_CLIENT_SECRET: envVars.COGNITO_CLIENT_SECRET,
+  
+  // DynamoDB
+  DYNAMODB_LEADERBOARD_TABLE: envVars.DYNAMODB_LEADERBOARD_TABLE,
+  DYNAMODB_LEADERBOARD_ARN: envVars.DYNAMODB_LEADERBOARD_ARN,
+  
+  // WebSocket
+  WEBSOCKET_URL: envVars.WEBSOCKET_URL,
+  WEBSOCKET_CONNECTION_URL: envVars.WEBSOCKET_CONNECTION_URL,
   AWS_S3_IMAGE_UPLOAD_PATH: envVars.AWS_S3_IMAGE_UPLOAD_PATH,
   AWS_S3_VIDEO_UPLOAD_PATH: envVars.AWS_S3_VIDEO_UPLOAD_PATH,
   AWS_S3_PDF_UPLOAD_PATH: envVars.AWS_S3_PDF_UPLOAD_PATH,

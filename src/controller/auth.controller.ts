@@ -3,11 +3,24 @@ import { SuccessResponse } from "../api-response";
 import { authService } from "../service/auth.service";
 
 const register = async (req: Request, res: Response) => {
-  const { name, email, password } = req.body;
+  const { name, email, preferred_username, password } = req.body;
 
-  const result = await authService.register({ name, email, password });
+  const result = await authService.register({ 
+    name, 
+    email, 
+    preferred_username, 
+    password 
+  });
 
-  SuccessResponse.created(res, result, "Registration successful");
+  SuccessResponse.created(res, result, result.message);
+};
+
+const confirmSignUp = async (req: Request, res: Response) => {
+  const { email, confirmationCode } = req.body;
+
+  const result = await authService.confirmSignUp(email, confirmationCode);
+
+  SuccessResponse.ok(res, result, result.message);
 };
 
 const login = async (req: Request, res: Response) => {
@@ -19,15 +32,19 @@ const login = async (req: Request, res: Response) => {
 };
 
 const getProfile = async (req: Request, res: Response) => {
-  const userId = req.appUser?.user_id;
+  // User details are already available from the auth middleware
+  const user = req.cognitoUser;
 
-  const result = await authService.getProfile(userId!);
+  if (!user) {
+    return SuccessResponse.ok(res, req.appUser, "Profile retrieved successfully");
+  }
 
-  SuccessResponse.ok(res, result, "Profile retrieved successfully");
+  SuccessResponse.ok(res, user, "Profile retrieved successfully");
 };
 
 export const authController = {
   register,
+  confirmSignUp,
   login,
   getProfile,
 };

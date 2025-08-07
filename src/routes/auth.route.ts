@@ -7,6 +7,7 @@ const router = express.Router({ mergeParams: true });
 
 // Public routes
 router.post("/register", validateReq(authValidation.register), authController.register);
+router.post("/confirm", validateReq(authValidation.confirmSignUp), authController.confirmSignUp);
 router.post("/login", validateReq(authValidation.login), authController.login);
 
 // Protected routes
