@@ -33,7 +33,7 @@ A complete AWS Lambda-compatible Node.js application built for the Nebula Logix 
 
 ## 🚀 Base URL
 ```
-Local Development: http://localhost:8012
+Local Development: http://localhost:5500
 AWS Lambda: (deployed endpoint)
 ```
 
@@ -435,7 +435,7 @@ node test-challenge-api.js
 
 **1. Register a user:**
 ```bash
-curl -X POST http://localhost:8012/v1/auth/register \
+curl -X POST http://localhost:5500/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "name": "John Doe",
@@ -447,7 +447,7 @@ curl -X POST http://localhost:8012/v1/auth/register \
 
 **2. Confirm registration:**
 ```bash
-curl -X POST http://localhost:8012/v1/auth/confirm \
+curl -X POST http://localhost:5500/v1/auth/confirm \
   -H "Content-Type: application/json" \
   -d '{
     "email": "john@example.com",
@@ -457,7 +457,7 @@ curl -X POST http://localhost:8012/v1/auth/confirm \
 
 **3. Login:**
 ```bash
-curl -X POST http://localhost:8012/v1/auth/login \
+curl -X POST http://localhost:5500/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "john@example.com",
@@ -467,7 +467,7 @@ curl -X POST http://localhost:8012/v1/auth/login \
 
 **4. Submit a high score:**
 ```bash
-curl -X POST http://localhost:8012/v1/leaderboard/submit \
+curl -X POST http://localhost:5500/v1/leaderboard/submit \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
   -d '{
@@ -477,7 +477,7 @@ curl -X POST http://localhost:8012/v1/leaderboard/submit \
 
 **5. Get top scores:**
 ```bash
-curl -X GET http://localhost:8012/v1/leaderboard/top
+curl -X GET http://localhost:5500/v1/leaderboard/top
 ```
 
 ---

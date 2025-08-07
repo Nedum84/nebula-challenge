@@ -1,4 +1,3 @@
-import { UserPayload } from "../middlewares";
 import config from "./config";
 
 export type UserConf = {

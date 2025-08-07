@@ -5,7 +5,3 @@ export const partnerAuth = (req: Request, res: Response, next: NextFunction) => 
   next();
 };
 
-export const requireAuthPartner = (req: Request, res: Response, next: NextFunction) => {
-  // TODO: Implement require auth partner middleware
-  next();
-};

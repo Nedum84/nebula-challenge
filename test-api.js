@@ -3,7 +3,7 @@
 // Simple API test script
 const http = require('http');
 
-const baseUrl = 'http://localhost:8012';
+const baseUrl = 'http://localhost:5500';
 let authToken = '';
 
 // Helper function to make HTTP requests

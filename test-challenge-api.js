@@ -3,7 +3,7 @@
 // Complete API test script for the Nebula Logix challenge
 const http = require('http');
 
-const baseUrl = 'http://localhost:8012';
+const baseUrl = 'http://localhost:5500';
 let accessToken = '';
 let userId = '';
 let userName = '';

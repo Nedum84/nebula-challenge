@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 import { SuccessResponse } from "../api-response";
-import { authService } from "../service/auth.service";
+import { cognitoService } from "../service/cognito.service";
+import { CognitoUserContext } from "../middlewares/auth.middleware";
 
 const register = async (req: Request, res: Response) => {
   const { name, email, preferred_username, password } = req.body;
 
-  const result = await authService.register({ 
+  const result = await cognitoService.register({ 
     name, 
     email, 
     preferred_username, 
@@ -18,7 +19,7 @@ const register = async (req: Request, res: Response) => {
 const confirmSignUp = async (req: Request, res: Response) => {
   const { email, confirmationCode } = req.body;
 
-  const result = await authService.confirmSignUp(email, confirmationCode);
+  const result = await cognitoService.confirmSignUp(email, confirmationCode);
 
   SuccessResponse.ok(res, result, result.message);
 };
@@ -26,17 +27,17 @@ const confirmSignUp = async (req: Request, res: Response) => {
 const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  const result = await authService.login({ email, password });
+  const result = await cognitoService.login({ email, password });
 
   SuccessResponse.ok(res, result, "Login successful");
 };
 
 const getProfile = async (req: Request, res: Response) => {
-  // User details are already available from the auth middleware
-  const user = req.cognitoUser;
+  // Get user from context
+  const user = CognitoUserContext.use();
 
   if (!user) {
-    return SuccessResponse.ok(res, req.appUser, "Profile retrieved successfully");
+    throw new Error("User not found in context");
   }
 
   SuccessResponse.ok(res, user, "Profile retrieved successfully");

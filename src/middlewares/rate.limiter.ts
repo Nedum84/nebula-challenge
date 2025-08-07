@@ -7,7 +7,7 @@ import httpStatus from "http-status";
 // import { isLocal } from "../js-utils/env.utils";
 import * as jwt from "jsonwebtoken";
 import config from "../config/config";
-import { UserPayload } from "./auth.middleware";
+import { CognitoUserContext } from "./auth.middleware";
 
 const defaultLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
@@ -68,13 +68,11 @@ function limiterKeyGenerator(req: Request, res: Response): string {
 
   try {
     if (token) {
-      const payload = jwt.verify(token, config.jwt.secret) as any;
-      if (payload) {
-        const appUser = payload.user as UserPayload;
-
-        // return `${profileId}`;
-        // return `${appUser.user_id}_${deviceInfo}`;
-        return `${appUser.user_id}`;
+      // For Cognito tokens, we can decode without verification for rate limiting purposes
+      const decoded = jwt.decode(token) as any;
+      if (decoded && decoded.sub) {
+        // Cognito uses 'sub' as the user identifier
+        return `${decoded.sub}`;
       }
     }
   } catch (error) {}

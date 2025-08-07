@@ -4,7 +4,7 @@ import { verify, VerifyErrors } from "jsonwebtoken";
 // TODO: Missing imports - comment out until modules are available
 // import { isTest } from "../js-utils/env.utils";
 // import { base64 } from "../js-utils/encrypt";
-import { UserPayload } from "./auth.middleware";
+// import { UserPayload } from "./auth.middleware";
 
 /** Checks if token is set and appends the user object
  else continue with the request */
@@ -34,11 +34,12 @@ export const currentUser = async (req: Request, res: Response, next: NextFunctio
   try {
     verify(token, config.jwt.secret, (err: VerifyErrors | null, data: any) => {
       if (!err) {
-        req.appUser = {
-          ...req.appUser,
-          ...data.user,
-          ip: req.ip,
-        };
+        // TODO: Implement user context if needed
+        // req.appUser = {
+        //   ...req.appUser,
+        //   ...data.user,
+        //   ip: req.ip,
+        // };
       }
 
       next();

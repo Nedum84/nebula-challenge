@@ -17,25 +17,28 @@ An AWS Lambda-compatible Full Stack Node.js application built with TypeScript fo
 ## 🏗️ AWS Services Used
 
 - **AWS Cognito**: User authentication and management
-- **Amazon DynamoDB**: Leaderboard score storage  
+- **Amazon DynamoDB**: Leaderboard score storage
 - **API Gateway WebSocket**: Real-time notifications
 - **AWS Lambda**: Serverless compute
-- **API Gateway**: HTTP API endpoints  
+- **API Gateway**: HTTP API endpoints
 
 ## Quick Start
 
 ### Prerequisites
+
 - Node.js (v16 or higher)
 - npm
 
 ### Installation
 
 1. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 2. **Build the project:**
+
    ```bash
    npm run build
    ```
@@ -45,11 +48,12 @@ An AWS Lambda-compatible Full Stack Node.js application built with TypeScript fo
    npm start
    ```
 
-The server will start on http://localhost:8012
+The server will start on http://localhost:5500
 
 ### Development Mode
 
 For development with auto-reload:
+
 ```bash
 npm run dev
 ```
@@ -58,28 +62,30 @@ npm run dev
 
 ### Authentication Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/v1/auth/register` | Register with Cognito | No |
-| POST | `/v1/auth/confirm` | Confirm email registration | No |
-| POST | `/v1/auth/login` | User login (Cognito) | No |
-| GET | `/v1/auth/profile` | Get user profile | Yes |
-| POST | `/v1/leaderboard/submit` | Submit score to DynamoDB | Yes |
-| GET | `/v1/leaderboard` | Get leaderboard | No |
-| GET | `/v1/leaderboard/top` | Get top 1 scores | No |
-| GET | `/v1/leaderboard/user/scores` | Get user scores | Yes |
-| GET | `/v1/leaderboard/user/best` | Get user best score | Yes |
+| Method | Endpoint                      | Description                | Auth Required |
+| ------ | ----------------------------- | -------------------------- | ------------- |
+| POST   | `/v1/auth/register`           | Register with Cognito      | No            |
+| POST   | `/v1/auth/confirm`            | Confirm email registration | No            |
+| POST   | `/v1/auth/login`              | User login (Cognito)       | No            |
+| GET    | `/v1/auth/profile`            | Get user profile           | Yes           |
+| POST   | `/v1/leaderboard/submit`      | Submit score to DynamoDB   | Yes           |
+| GET    | `/v1/leaderboard`             | Get leaderboard            | No            |
+| GET    | `/v1/leaderboard/top`         | Get top 1 scores           | No            |
+| GET    | `/v1/leaderboard/user/scores` | Get user scores            | Yes           |
+| GET    | `/v1/leaderboard/user/best`   | Get user best score        | Yes           |
 
 ## Testing the API
 
 ### Automated Tests
 
 Run the comprehensive challenge test script:
+
 ```bash
 node test-challenge-api.js
 ```
 
 This will test all challenge requirements including:
+
 - AWS Cognito authentication flow
 - Score submission to DynamoDB
 - WebSocket notifications for high scores
@@ -88,8 +94,9 @@ This will test all challenge requirements including:
 ### Manual Testing
 
 **1. Register a user:**
+
 ```bash
-curl -X POST http://localhost:8012/v1/auth/register \
+curl -X POST http://localhost:5500/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "name": "John Doe",
@@ -99,8 +106,9 @@ curl -X POST http://localhost:8012/v1/auth/register \
 ```
 
 **2. Login:**
+
 ```bash
-curl -X POST http://localhost:8012/v1/auth/login \
+curl -X POST http://localhost:5500/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "john@example.com",
@@ -109,8 +117,9 @@ curl -X POST http://localhost:8012/v1/auth/login \
 ```
 
 **3. Get profile (use token from login response):**
+
 ```bash
-curl -X GET http://localhost:8012/v1/auth/profile \
+curl -X GET http://localhost:5500/v1/auth/profile \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
@@ -120,7 +129,7 @@ Create a `.env` file in the root directory:
 
 ```env
 NODE_ENV=development
-PORT=8012
+PORT=5500
 JWT_SECRET=your-super-secret-jwt-key
 JWT_ACCESS_EXPIRATION_MINUTES=30
 ```

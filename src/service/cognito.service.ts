@@ -229,11 +229,7 @@ const getUserDetails = async (accessToken: string): Promise<CognitoUser> => {
 };
 
 const verifyAccessToken = async (accessToken: string): Promise<CognitoUser> => {
-  try {
-    return await getUserDetails(accessToken);
-  } catch (error) {
-    throw error;
-  }
+  return await getUserDetails(accessToken);
 };
 
 export const cognitoService = {

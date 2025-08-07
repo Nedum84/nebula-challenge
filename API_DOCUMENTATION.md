@@ -1,12 +1,15 @@
 # Nebula Logix API Documentation
 
 ## Base URL
+
 ```
-http://localhost:8012
+http://localhost:5500
 ```
 
 ## Authentication
+
 The API uses JWT Bearer tokens for authentication. Include the token in the Authorization header:
+
 ```
 Authorization: Bearer <token>
 ```
@@ -16,11 +19,13 @@ Authorization: Bearer <token>
 ## Endpoints
 
 ### 1. User Registration
+
 Register a new user account.
 
 **Endpoint:** `POST /v1/auth/register`
 
 **Request Body:**
+
 ```json
 {
   "name": "John Doe",
@@ -30,11 +35,13 @@ Register a new user account.
 ```
 
 **Validation Rules:**
+
 - `name`: Required, 2-100 characters
 - `email`: Required, valid email format, converted to lowercase
 - `password`: Required, 8-128 characters, must contain at least one uppercase letter, one lowercase letter, and one number
 
 **Success Response (201):**
+
 ```json
 {
   "status": 201,
@@ -53,6 +60,7 @@ Register a new user account.
 ```
 
 **Error Response (400):**
+
 ```json
 {
   "status": 400,
@@ -65,11 +73,13 @@ Register a new user account.
 ---
 
 ### 2. User Login
+
 Authenticate a user and receive an access token.
 
 **Endpoint:** `POST /v1/auth/login`
 
 **Request Body:**
+
 ```json
 {
   "email": "john.doe@example.com",
@@ -78,10 +88,12 @@ Authenticate a user and receive an access token.
 ```
 
 **Validation Rules:**
+
 - `email`: Required, valid email format, converted to lowercase
 - `password`: Required
 
 **Success Response (200):**
+
 ```json
 {
   "status": 200,
@@ -100,6 +112,7 @@ Authenticate a user and receive an access token.
 ```
 
 **Error Response (401):**
+
 ```json
 {
   "status": 401,
@@ -112,16 +125,19 @@ Authenticate a user and receive an access token.
 ---
 
 ### 3. Get User Profile
+
 Get the current user's profile information. Requires authentication.
 
 **Endpoint:** `GET /v1/auth/profile` or `GET /v1/auth/me`
 
 **Headers:**
+
 ```
 Authorization: Bearer <token>
 ```
 
 **Success Response (200):**
+
 ```json
 {
   "status": 200,
@@ -137,6 +153,7 @@ Authorization: Bearer <token>
 ```
 
 **Error Response (401):**
+
 ```json
 {
   "status": 401,
@@ -159,7 +176,9 @@ Authorization: Bearer <token>
 - **500 Internal Server Error**: Server error
 
 ### Error Response Format
+
 All error responses follow this format:
+
 ```json
 {
   "status": <http_status_code>,
@@ -171,6 +190,7 @@ All error responses follow this format:
 ```
 
 ### Validation Error Example
+
 ```json
 {
   "status": 400,
@@ -193,8 +213,9 @@ All error responses follow this format:
 ### Example cURL Commands
 
 **Register a new user:**
+
 ```bash
-curl -X POST http://localhost:8012/v1/auth/register \
+curl -X POST http://localhost:5500/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "name": "John Doe",
@@ -204,8 +225,9 @@ curl -X POST http://localhost:8012/v1/auth/register \
 ```
 
 **Login:**
+
 ```bash
-curl -X POST http://localhost:8012/v1/auth/login \
+curl -X POST http://localhost:5500/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "john.doe@example.com",
@@ -214,8 +236,9 @@ curl -X POST http://localhost:8012/v1/auth/login \
 ```
 
 **Get profile:**
+
 ```bash
-curl -X GET http://localhost:8012/v1/auth/profile \
+curl -X GET http://localhost:5500/v1/auth/profile \
   -H "Authorization: Bearer <your_token_here>"
 ```
 

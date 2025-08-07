@@ -6,10 +6,10 @@ const envVarsSchema = Joi.object()
   .keys({
     NODE_ENV: Joi.string().default("development"),
     REGION: Joi.string().default("eu-west-2"),
-    API_BASE_URL: Joi.string().default("http://localhost:8012"),
+    API_BASE_URL: Joi.string().default("http://localhost:5500"),
     USER_CLIENT_URL: Joi.string().default("http://localhost:5005"),
     ADMIN_CLIENT_URL: Joi.string().default("http://localhost:5006"),
-    PORT: Joi.number().default(8012),
+    PORT: Joi.number().default(5500),
     JWT_SECRET: Joi.string().description("JWT secret key").default("jwt-token-secret"),
     JWT_SECRET_ADMIN: Joi.string().description("JWT secret key").default("jwt-token-secret-admin"),
     JWT_ACCESS_EXPIRATION_MINUTES: Joi.number()

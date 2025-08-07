@@ -2,10 +2,15 @@ import { Request, Response } from "express";
 import { SuccessResponse } from "../api-response";
 import { dynamoDBService } from "../service/dynamodb.service";
 import { webSocketService } from "../service/websocket.service";
+import { CognitoUserContext } from "../middlewares/auth.middleware";
 
 const submitScore = async (req: Request, res: Response) => {
   const { score } = req.body;
-  const user = req.appUser!;
+  const user = CognitoUserContext.use();
+  
+  if (!user) {
+    throw new Error("User not found in context");
+  }
 
   // Submit score to DynamoDB
   const result = await dynamoDBService.submitScore({
@@ -48,7 +53,11 @@ const getTopScore = async (req: Request, res: Response) => {
 };
 
 const getUserScores = async (req: Request, res: Response) => {
-  const user = req.appUser!;
+  const user = CognitoUserContext.use();
+  
+  if (!user) {
+    throw new Error("User not found in context");
+  }
 
   const result = await dynamoDBService.getUserScores(user.user_id);
 
@@ -56,7 +65,11 @@ const getUserScores = async (req: Request, res: Response) => {
 };
 
 const getUserBestScore = async (req: Request, res: Response) => {
-  const user = req.appUser!;
+  const user = CognitoUserContext.use();
+  
+  if (!user) {
+    throw new Error("User not found in context");
+  }
 
   const result = await dynamoDBService.getUserBestScore(user.user_id);
 
