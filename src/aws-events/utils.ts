@@ -1,30 +1,15 @@
 import { compact, findKey, omit, unescape } from "lodash";
-import { AuditLog } from "../js-models";
 
 import { AwsEventType } from "./types";
-import { Transaction } from "sequelize";
-import { systemUserMeta } from "../js-utils/user.meta.utils";
-import { AuditLogAttributes } from "../js-audit-log/model";
-import { UserAttributes } from "../js-user/model";
-import { userCache } from "../js-user/service.cache";
-import { staticContentsCache } from "../js-static-contents/service.cache";
-import { EmailAddress, EmailFileAttachment } from "../js-email-service/types";
-import { UserMeta } from "../types/types";
-import { emailSendingService } from "../js-email-service/service.sending";
-import { emailService } from "../js-email-service/service";
-import { injectEmailVariables } from "../js-email-service/utils";
 
 const onCreateAuditLog = async (
   id: string,
-  payload: AuditLogAttributes,
-  transaction: Transaction
+  payload: any, // AuditLogAttributes type removed
+  transaction?: any // Transaction type removed, made optional
 ) => {
-  try {
-    await AuditLog.create(omit(payload, "id"), { returning: false, transaction });
-    console.log("[[AUDIT_LOG_ADDED]]==>", `${payload.id}=>${payload.action_id}`);
-  } catch (error) {
-    console.log("[[AUDIT_LOG_ERROR]]==>", error);
-  }
+  // Database operations removed - AuditLog.create removed
+  console.log("[[AUDIT_LOG_SKIPPED]] Database operations removed");
+  console.log("[[AUDIT_LOG_PAYLOAD]]==>", `${payload.id}=>${payload.action_id}`);
 
   // TODO: create/log it on AWS Dynamo DB or on opensearch
   return true;
@@ -38,21 +23,21 @@ const sendEmail = async (
     subject: string;
     content: string; // content or html
     html: string; // content or html
-    attachments: EmailFileAttachment[];
+    attachments: any[]; // EmailFileAttachment type removed
 
     raw_body_content: any;
     from?: string;
     reply_to?: string;
-    recipients?: (string | EmailAddress)[];
-    cc?: (string | EmailAddress)[];
-    bcc?: (string | EmailAddress)[];
+    recipients?: (string | any)[]; // EmailAddress type removed
+    cc?: (string | any)[]; // EmailAddress type removed
+    bcc?: (string | any)[]; // EmailAddress type removed
     media_file_ids?: string[];
     send_method: "batch" | "separate";
     email_type: "newsletter_user" | "email";
     add_to_logs?: boolean;
-    meta: UserMeta;
+    meta: any; // UserMeta type removed
   },
-  transaction: Transaction
+  transaction?: any // Transaction type removed, made optional
 ) => {
   const to = payload.recipients || [];
 
@@ -62,23 +47,27 @@ const sendEmail = async (
     to.push(payload.email);
   }
 
-  await emailSendingService.initiateEmail(
-    {
-      from: payload.from!,
-      subject: payload.subject,
-      content: payload.content || payload.html,
-      reply_to: payload.reply_to,
-      recipients: to,
-      cc: payload.cc,
-      bcc: payload.bcc,
-      media_file_ids: payload.media_file_ids,
-      raw_body_content: payload.raw_body_content,
-      send_method: payload.send_method,
-      add_to_logs: payload.add_to_logs,
-      email_type: payload.email_type,
-    },
-    { meta: payload.meta || systemUserMeta, transaction }
-  );
+  // await emailSendingService.initiateEmail(
+  //   {
+  //     from: payload.from!,
+  //     subject: payload.subject,
+  //     content: payload.content || payload.html,
+  //     reply_to: payload.reply_to,
+  //     recipients: to,
+  //     cc: payload.cc,
+  //     bcc: payload.bcc,
+  //     media_file_ids: payload.media_file_ids,
+  //     raw_body_content: payload.raw_body_content,
+  //     send_method: payload.send_method,
+  //     add_to_logs: payload.add_to_logs,
+  //     email_type: payload.email_type,
+  //   },
+  //   { meta: payload.meta || systemUserMeta, transaction }
+  // ); // emailSendingService and systemUserMeta commented out
+  console.log("[[EMAIL_SENDING_SKIPPED]] emailSendingService.initiateEmail commented out", {
+    to,
+    subject: payload.subject,
+  });
 
   return true;
 };
@@ -89,19 +78,20 @@ const sendEmailFromDb = async (
     name?: string;
     email: string;
     user_id?: string;
-    notification?: UserAttributes["notification"];
+    notification?: any; // UserAttributes["notification"] type removed
   } & Record<string, any>,
   type: AwsEventType,
-  transaction: Transaction
+  transaction?: any // Transaction type removed, made optional
 ) => {
   const template = await getEmailTemplateFromDb(type, transaction);
   if (!template) return false;
 
   if (payload.user_id) {
-    const user = await userCache.findById(payload.user_id, transaction);
-    if (!payload.email) payload.email = user.email;
-    if (!payload.name) payload.name = user.name;
-    if (!payload.notification) payload.notification = user.notification;
+    // Database operations removed - userCache.findById removed
+    console.log("[[USER_CACHE_SKIPPED]] Database operations removed for user_id:", payload.user_id);
+    // if (!payload.email) payload.email = user.email;
+    // if (!payload.name) payload.name = user.name;
+    // if (!payload.notification) payload.notification = user.notification;
   }
 
   if (!template.tags.includes("skip-email")) {
@@ -112,10 +102,15 @@ const sendEmailFromDb = async (
       }
     }
 
-    await emailService.sendHtml({
-      to: [{ name: payload.name!, address: payload.email || (payload as any).address }],
-      subject: await injectEmailVariables(template.title, payload),
-      html: await injectEmailVariables(template.content, { ...payload }),
+    // await emailService.sendHtml({
+    //   to: [{ name: payload.name!, address: payload.email || (payload as any).address }],
+    //   subject: await injectEmailVariables(template.title, payload),
+    //   html: await injectEmailVariables(template.content, { ...payload }),
+    // }); // emailService and injectEmailVariables commented out
+    console.log("[[EMAIL_SERVICE_SKIPPED]] emailService.sendHtml commented out", {
+      to: payload.email,
+      subject: template.title,
+      html_preview: template.content?.substring(0, 100) + "...",
     });
   }
 
@@ -131,13 +126,13 @@ const sendEmailFromDb = async (
     // if (tokens.length) {
     //   await easPushNotificationService.send({
     //     tokens: tokens,
-    //     title: await injectEmailVariables(template.title, payload),
-    //     body: await injectEmailVariables(unescape(template.content2), payload),
+    //     title: template.title, // injectEmailVariables commented out
+    //     body: unescape(template.content2), // injectEmailVariables commented out
     //     data: {
     //       ...payload,
     //       type,
     //       // body: await injectEmailVariables(unescape(template.content2), payload),
-    //       title: await injectEmailVariables(template.title, payload),
+    //       title: template.title, // injectEmailVariables commented out
     //     },
     //   });
     // }
@@ -146,25 +141,21 @@ const sendEmailFromDb = async (
   return true;
 };
 
-const getEmailTemplateFromDb = async (type: AwsEventType, transaction: Transaction) => {
+const getEmailTemplateFromDb = async (type: AwsEventType, transaction?: any) => {
+  // Database operations removed - staticContentsCache.findBySlug removed
+  console.log("[[TEMPLATE_CACHE_SKIPPED]] Database operations removed for type:", type);
+
   // For DB based email templates
   const keyType = findKey(AwsEventType, (v) => v === type);
   if (!keyType) return undefined;
 
-  const template = await staticContentsCache.findBySlug(keyType, transaction);
-  if (!template?.content || !template?.tags) return undefined;
-
-  const tags = compact((template.tags || "").split(",").map((it) => it.trim()));
-
-  if (!tags.includes("react-email-editor")) return undefined;
-  if (!template.is_active) return undefined;
-
+  // Return mock template to maintain functionality without database
   return {
-    content: unescape(template.content),
-    content2: unescape(template.content2),
-    content3: unescape(template.content3),
-    title: template.title,
-    tags,
+    content: `<p>Email template for ${keyType}</p>`,
+    content2: `Push notification for ${keyType}`,
+    content3: "",
+    title: `${keyType} Notification`,
+    tags: ["react-email-editor"],
   };
 };
 

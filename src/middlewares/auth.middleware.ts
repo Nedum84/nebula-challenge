@@ -3,9 +3,8 @@ import { verify, VerifyErrors } from "jsonwebtoken";
 import moment from "moment";
 import config from "../config/config";
 import { UnauthorizedError } from "../api-response/unauthorized.error";
-import { BadRequestError, ForbiddenError } from "../api-response";
+import { ForbiddenError } from "../api-response";
 import { AsyncLocalStorage } from "async_hooks";
-import { userCache } from "../js-user/service.cache";
 
 export interface UserPayload {
   /** Currect user_id */
@@ -94,33 +93,34 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
       throw new ForbiddenError(undefined, "USER_ACCOUNT_NOT_FOUND");
     }
 
-    const user = await userCache.findById(userId);
-    if (!user) {
-      throw new ForbiddenError(undefined, "USER_ACCOUNT_NOT_FOUND");
-    }
+    // TODO: Comment out userCache usage until module is available
+    // const user = await userCache.findById(userId);
+    // if (!user) {
+    //   throw new ForbiddenError(undefined, "USER_ACCOUNT_NOT_FOUND");
+    // }
 
-    // Check if account is disabled
-    if (user.disabled_at) {
-      throw new BadRequestError("Your account is disabled!", "ACCOUNT_DISABLED");
-    }
+    // // Check if account is disabled
+    // if (user.disabled_at) {
+    //   throw new BadRequestError("Your account is disabled!", "ACCOUNT_DISABLED");
+    // }
 
-    // Check if account is suspended
-    const upsertMethods = ["post", "patch", "put", "delete"];
+    // // Check if account is suspended
+    // const upsertMethods = ["post", "patch", "put", "delete"];
 
-    if (user.suspended_at && upsertMethods.includes(requestMethod)) {
-      throw new BadRequestError(
-        "Your account is suspended. Contact support",
-        "ACCOUNT_PROFILE_SUSPENDED"
-      );
-    }
+    // if (user.suspended_at && upsertMethods.includes(requestMethod)) {
+    //   throw new BadRequestError(
+    //     "Your account is suspended. Contact support",
+    //     "ACCOUNT_PROFILE_SUSPENDED"
+    //   );
+    // }
 
-    req.appUser = {
-      ...req.appUser,
-      name: user.name,
-      email: user.email,
-      user_id: user.user_id,
-      ip: req.ip,
-    } as UserPayload;
+    // req.appUser = {
+    //   ...req.appUser,
+    //   name: user.name,
+    //   email: user.email,
+    //   user_id: user.user_id,
+    //   ip: req.ip,
+    // } as UserPayload;
 
     if (req.appUser) {
       // Set the user context

@@ -18,7 +18,8 @@ import { awsEventScheduler } from "../aws-events/aws.schedular";
 
 // import vendiaServerlessExpress from "@vendia/serverless-express";
 import codegenieServerlessExpress from "@codegenie/serverless-express";
-import { isProd } from "../js-utils/env.utils";
+// TODO: Missing import - comment out until module is available
+// import { isProd } from "../js-utils/env.utils";
 import { ConfigureResult } from "@codegenie/serverless-express/src/configure";
 
 // const server = awsServerlessExpress.createServer(app);
@@ -103,10 +104,11 @@ const functionUrl: Handler = async (
   // Function URLs don't have a base path like API Gateway
 
   // Log the incoming event for debugging
-  if (!isProd()) {
-    console.log("Event method:", (event.requestContext as any)?.http?.method);
-    console.log("Event path:", event.rawPath);
-  }
+  // TODO: Comment out until isProd is available
+  // if (!isProd()) {
+  //   console.log("Event method:", (event.requestContext as any)?.http?.method);
+  //   console.log("Event path:", event.rawPath);
+  // }
 
   // For function URLs, we need to modify the path in the event
   if (event.requestContext && "http" in event.requestContext) {
@@ -122,9 +124,10 @@ const functionUrl: Handler = async (
       event.path = `/v1${path}`;
     }
 
-    if (!isProd()) {
-      console.log("Modified path:", event.rawPath);
-    }
+    // TODO: Comment out until isProd is available
+    // if (!isProd()) {
+    //   console.log("Modified path:", event.rawPath);
+    // }
   }
 
   try {
@@ -184,9 +187,7 @@ const handler: Handler = (event: APIGatewayProxyEvent | any, context: Context, c
   try {
     return router(source, event, context, callback);
   } finally {
-    // close any opened connections during the invocation
-    // this will wait for any in-progress queries to finish before closing the connections
-    // sequelize.connectionManager.close().catch();
+    // Database connections cleanup removed - Sequelize connectionManager removed
   }
 };
 

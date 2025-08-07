@@ -18,7 +18,8 @@ import { awsSns } from "../aws-events/aws.sns";
 import { awsEventScheduler } from "../aws-events/aws.schedular";
 
 import codegenieServerlessExpress from "@codegenie/serverless-express";
-import { isProd } from "../js-utils/env.utils";
+// TODO: Missing import - comment out until module is available
+// import { isProd } from "../js-utils/env.utils";
 import { LambdaResponseStream } from "./types";
 
 // const server = awsServerlessExpress.createServer(app);
@@ -78,9 +79,10 @@ const functionUrlStream = async (
       event.path = `/v1${path}`;
     }
 
-    if (!isProd()) {
-      console.log("Modified path:", event.rawPath);
-    }
+    // TODO: Comment out until isProd is available
+    // if (!isProd()) {
+    //   console.log("Modified path:", event.rawPath);
+    // }
   }
   (event as any).responseStream = responseStream;
   (context as any).responseStream = responseStream; // Also works
@@ -117,9 +119,10 @@ const functionUrlApp: Handler = async (
       event.path = `/v1${path}`;
     }
 
-    if (!isProd()) {
-      console.log("Modified path:", event.rawPath);
-    }
+    // TODO: Comment out until isProd is available
+    // if (!isProd()) {
+    //   console.log("Modified path:", event.rawPath);
+    // }
   }
 
   try {
@@ -186,9 +189,7 @@ const handler: Handler = (
   try {
     return router(source, event, context, callback);
   } finally {
-    // close any opened connections during the invocation
-    // this will wait for any in-progress queries to finish before closing the connections
-    // sequelize.connectionManager.close().catch();
+    // Database connections cleanup removed - Sequelize connectionManager removed
   }
 };
 

@@ -1,16 +1,13 @@
 import { Request, Response } from "express";
-import { SuccessResponse } from "../../api-response";
-import { UserAttributes } from "../model";
-import { userService } from "../service";
-import { userUserMeta } from "../../js-utils/user.meta.utils";
+import { SuccessResponse } from "../api-response";
+import { authService } from "../service/auth.service";
 
 const register = async (req: Request, res: Response) => {
-  const { user_id: user_id } = req.appUser!;
-  const body: UserAttributes = req.body;
+  const { name, email } = req.body;
 
-  const result = await userService.update({ user_id, body }, { meta: userUserMeta(req) });
+  const result = await authService.register({ name, email });
 
-  SuccessResponse.ok(res, result);
+  SuccessResponse.created(res, result, "Registration successful");
 };
 
 export const authController = {

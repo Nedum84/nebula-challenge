@@ -1,8 +1,9 @@
 import config from "../config/config";
 import { NextFunction, Request, Response } from "express";
 import { verify, VerifyErrors } from "jsonwebtoken";
-import { isTest } from "../js-utils/env.utils";
-import { base64 } from "../js-utils/encrypt";
+// TODO: Missing imports - comment out until modules are available
+// import { isTest } from "../js-utils/env.utils";
+// import { base64 } from "../js-utils/encrypt";
 import { UserContext, UserPayload } from "./auth.middleware";
 
 /** Checks if token is set and appends the user object
@@ -14,17 +15,19 @@ export const currentUser = async (req: Request, res: Response, next: NextFunctio
 
   const deviceInfo = req.headers["device-info"] || req.body?.auth_device_info;
 
-  if (deviceInfo) {
-    req.appUser = {
-      ...req.appUser,
-      device: base64.decodeAndParse(deviceInfo as string),
-      ...({} as UserPayload),
-    };
-  }
+  // TODO: Comment out until base64 module is available
+  // if (deviceInfo) {
+  //   req.appUser = {
+  //     ...req.appUser,
+  //     device: base64.decodeAndParse(deviceInfo as string),
+  //     ...({} as UserPayload),
+  //   };
+  // }
 
-  if (!isTest()) {
-    console.log("====>>>>>API_SOURCE<<<<<=====", req.appUser?.device?.device_type);
-  }
+  // TODO: Comment out until isTest module is available
+  // if (!isTest()) {
+  //   console.log("====>>>>>API_SOURCE<<<<<=====", req.appUser?.device?.device_type);
+  // }
 
   if (!token) return next();
 

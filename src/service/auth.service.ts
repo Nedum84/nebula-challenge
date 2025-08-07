@@ -1,13 +1,29 @@
-import { BadRequestError } from "../api-response";
+interface RegisterData {
+  name: string;
+  email: string;
+}
 
-const register = async (
-  data: Pick<UserAttributes, "name" | "email" | "referee_code" | "signin_method"> &
-    Partial<UserAttributes>
-) => {
-  // TODO
-  await sendUserRegEmails(user as UserInstance & { created_at: Date });
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  created_at: Date;
+}
 
-  throw new BadRequestError("error herer");
+const register = async (data: RegisterData): Promise<User> => {
+  const { name, email } = data;
+  
+  // Mock user creation (in real app this would save to database)
+  const user: User = {
+    id: `user_${Date.now()}`,
+    name,
+    email,
+    created_at: new Date()
+  };
+
+  // TODO: Add email validation, duplicate check, etc.
+  // TODO: Send registration email
+  
   return user;
 };
 

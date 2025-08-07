@@ -3,14 +3,16 @@ import crypto from "crypto";
 import { NextFunction, Request, Response } from "express";
 import { BadRequestError } from "../api-response";
 import httpStatus from "http-status";
-import { isLocal } from "../js-utils/env.utils";
+// TODO: Missing import - comment out until module is available
+// import { isLocal } from "../js-utils/env.utils";
 import * as jwt from "jsonwebtoken";
 import config from "../config/config";
 import { UserPayload } from "./auth.middleware";
 
 const defaultLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  limit: isLocal() ? 10000 : 50, // TODO change to 100 later
+  // TODO: Comment out until isLocal is available - using default limit
+  limit: 50, // TODO change to 100 later (was: isLocal() ? 10000 : 50)
   //   skipSuccessfulRequests: true, //
   keyGenerator: limiterKeyGenerator,
   handler: function (req, res) {

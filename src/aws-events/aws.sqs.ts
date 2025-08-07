@@ -1,11 +1,8 @@
 import { Context, SQSEvent } from "aws-lambda";
 import { AwsEventBody, AwsEventType } from "./types";
 import { processAwsEvents } from "./service";
-import { awsEventScheduler } from "./aws.schedular";
 import config from "../config/config";
-import { getModelRawData } from "../js-models/utils";
 import { randomUUID } from "crypto";
-import { isLocal, isTest } from "../js-utils/env.utils";
 
 import {
   SQS,
@@ -18,15 +15,9 @@ import {
   SendMessageCommand,
   SendMessageCommandInput,
 } from "@aws-sdk/client-sqs";
-import { sesEmailNotification } from "../js-email-log/utils";
 
 const sqsClient = new SQSClient({
   apiVersion: "2012-11-05",
-  // signatureVersion: "v4",
-});
-const sqs = new SQS({
-  apiVersion: "2012-11-05",
-  // signatureVersion: "v4",
 });
 
 const create = async <T = any>(params: {
@@ -34,26 +25,24 @@ const create = async <T = any>(params: {
   queueUrl?: string;
   payload: AwsEventBody<T>["payload"];
 }) => {
-  if (isTest()) return true;
-  if (isLocal()) return true;
+  if (process.env.NODE_ENV === "test") return true; // isTest commented out
+  if (process.env.NODE_ENV === "development") return true; // isLocal commented out
 
   if (!params.payload.id) params.payload.id = randomUUID();
-  const payload = getModelRawData(params.payload); // force it to be JSONify(by removing sequelize unwanted tags)
+  const payload = params.payload; // getModelRawData commented out
 
   const body: SendMessageCommandInput = {
     MessageBody: JSON.stringify({ type: params.type, payload }),
     QueueUrl: params.queueUrl || config.SQS_QUEUE_URL,
   };
 
-  if (isLocal()) {
+  if (process.env.NODE_ENV === "development") {
+    // isLocal commented out
     return processAwsEvents({ type: params.type, payload, triggeredByJob: false });
   }
   try {
     const result = await sqsClient.send(new SendMessageCommand(body));
-    // OR
-    // const result = await sqs.sendMessage(body);
     console.log("CREATE_SQS_SUCCESS", result.$metadata);
-    // return result.$response.httpResponse.statusCode === 200;
     return true;
   } catch (error) {
     console.log("CREATE_SQS_ERROR", error);
@@ -68,13 +57,10 @@ const deleteQueueItem = async (receiptHandle: string, queueUrl?: string) => {
     ReceiptHandle: receiptHandle,
   };
 
-  if (isTest() || isLocal()) return true;
+  if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "development") return true; // isTest and isLocal commented out
   try {
     const result = await sqsClient.send(new DeleteMessageCommand(params));
-    // OR
-    // const result = await sqs.deleteMessage(params);
     console.log("DELETE_SQS_QUEUE_SUCCESS", result.$metadata);
-    // return result.$response.httpResponse.statusCode === 200;
     return true;
   } catch (error) {
     console.log("DELETE_SQS_QUEUE_ERROR", error);
@@ -86,7 +72,7 @@ const deleteQueueItem = async (receiptHandle: string, queueUrl?: string) => {
 const read = async (params: {
   queueUrl?: string;
 }): Promise<ReceiveMessageResult["Messages"] | undefined> => {
-  if (isTest() || isLocal()) return undefined;
+  if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "development") return undefined; // isTest and isLocal commented out
 
   const body: ReceiveMessageCommandInput = {
     MaxNumberOfMessages: 5,
@@ -146,19 +132,6 @@ export async function lambdaHandler(event: SQSEvent, context: Context) {
       });
 
       if (res) await deleteQueueItem(record.receiptHandle);
-
-      // Triggered from event schedular
-      if (body.event_name) {
-        await awsEventScheduler.deleteIfExist(body.event_name);
-      }
-    } else {
-      // FOR SES TRIGGERED
-      if ((body as any).eventType === "Complaint" || (body as any).eventType === "Bounce") {
-        return sesEmailNotification(body as any);
-      }
-
-      // OTHER TRIGGERS
-      console.log("[[ SQS_OTHER_PAYLOAD]]", body);
     }
   }
   return {};

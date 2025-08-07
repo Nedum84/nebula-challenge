@@ -5,6 +5,6 @@ import { authController } from "../controller/auth.controller";
 
 const router = express.Router({ mergeParams: true });
 
-router.pos("/register", validateReq(authValidation.register), authController.register);
+router.post("/register", validateReq(authValidation.register), authController.register);
 
 export const authRoutes = router;

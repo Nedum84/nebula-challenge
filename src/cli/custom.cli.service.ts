@@ -1,5 +1,7 @@
-import sequelize from "../js-models";
-import { userService } from "../js-user/service";
+// Database imports removed - sequelize import removed
+// import sequelize from "../js-models";
+// TODO: Missing import - comment out until module is available
+// import { userService } from "../js-user/service";
 import { register, registerDev, handler } from "./cli.service";
 
 /**
@@ -47,10 +49,10 @@ register["cmd:study_reminder_notification"] = async (
 ) => {
   console.log("[[CLI_STUDY_TIME_REMINDER]]", args);
 
-  const result = await sequelize.transaction(async (transaction) => {
+  // Database transaction removed - sequelize.transaction removed
+  const result = await Promise.resolve({
     // return await userService.notifyUsersForStudy({ transaction });
-    console.log("Study notification feature not implemented yet");
-    return { message: "Study notification feature not implemented" };
+    message: "Study notification feature not implemented - database operations removed"
   });
 
   console.log(

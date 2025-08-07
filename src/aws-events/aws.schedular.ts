@@ -3,9 +3,6 @@ import { AwsEventBody, AwsEventType } from "./types";
 import { processAwsEvents } from "./service";
 import { randomUUID } from "crypto";
 import config from "../config/config";
-import { momentJs } from "../js-utils/time.utils";
-import { getModelRawData } from "../js-models/utils";
-import { isLocal, isTest } from "../js-utils/env.utils";
 import {
   Scheduler,
   SchedulerClient,
@@ -16,13 +13,6 @@ import {
   DeleteScheduleCommand,
   DeleteScheduleCommandInput,
 } from "@aws-sdk/client-scheduler";
-
-// More about event schedular
-// https://www.serverlessfanatic.cloud/using-the-new-amazon-eventbridge-scheduler-to-send-reminder-notifications
-// https://dev.to/slsbytheodo/9-surprises-using-aws-eventbridge-scheduler-13b6
-// https://conermurphy.com/blog/aws-eventbridge-scheduler-cdk
-// https://levelup.gitconnected.com/using-aws-eventbridge-scheduler-to-build-a-serverless-reminder-application-ba3086cf8e
-// https://www.youtube.com/watch?v=35V2ULLS6fI
 
 const schedulerClient = new SchedulerClient({ region: config.AWS_REGION });
 const scheduler = new Scheduler({ region: config.AWS_REGION });
@@ -46,13 +36,14 @@ async function create<T = any>(params: {
         endDate?: Date;
       };
 }) {
-  if (isTest()) return true;
+  // if (isTest()) return true;
+  if (process.env.NODE_ENV === "test") return true;
   // if (isLocal()) return true;
 
   const { schedule, type } = params;
 
   if (!params.payload.id) params.payload.id = randomUUID();
-  const payload = getModelRawData(params.payload); // force it to be JSONify(by removing sequelize unwanted tags)
+  const payload = params.payload; // getModelRawData commented out
 
   const eventName = generateEventName(type, payload.id);
 
@@ -60,9 +51,7 @@ async function create<T = any>(params: {
 
   const scheduleExpression: Pick<CreateScheduleCommandInput, "ScheduleExpression"> = (() => {
     if (schedule?.type === "atTime") {
-      const scheduleTime = momentJs(schedule?.scheduleAt)
-        .tz(defaultTz)
-        .format("yyyy-MM-DDTHH:mm:ss");
+      const scheduleTime = new Date(schedule?.scheduleAt).toISOString().replace(/\..+/, ""); // momentJs commented out
       return {
         ScheduleExpression: `at(${scheduleTime})`,
         ScheduleExpressionTimezone: defaultTz,
@@ -99,7 +88,8 @@ async function create<T = any>(params: {
     ...scheduleExpression,
   };
 
-  if (isLocal()) {
+  if (process.env.NODE_ENV === "development") {
+    // isLocal commented out
     return processAwsEvents({
       type: params.type,
       payload,
@@ -127,7 +117,7 @@ async function deleteIfExist(eventName: string, forceDelete = false) {
     GroupName: config.EVENT_SCHEDULAR_GROUP_NAME,
   };
 
-  if (isTest() || isLocal()) return true;
+  if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "development") return true; // isTest and isLocal commented out
   try {
     // If not force delete,
     if (!forceDelete) {
@@ -138,7 +128,8 @@ async function deleteIfExist(eventName: string, forceDelete = false) {
       if (schedule.ScheduleExpression?.includes("at")) {
         // console.log("ONE_TIME_EVENT");
       }
-      if (schedule.EndDate && momentJs(schedule.EndDate).isSameOrBefore()) {
+      if (schedule.EndDate && new Date(schedule.EndDate) <= new Date()) {
+        // momentJs commented out
         console.log("DONT_DELETE_YET", schedule.Name);
         return true;
       }

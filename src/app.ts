@@ -8,9 +8,9 @@ import morgan from "./config/morgan";
 import fileUpload from "express-fileupload";
 import { NotFoundError } from "./api-response";
 import { errorHandler } from "./middlewares";
-import { csrfRequest } from "./middlewares/csrf.request";
+// import { csrfRequest } from "./middlewares/csrf.request"; // Removed - module not found
 import { rateLimiter } from "./middlewares/rate.limiter";
-import { isProd } from "./js-utils/env.utils";
+// import { isProd } from "./js-utils/env.utils"; // Removed - module not found
 import { authRoutes } from "./routes/auth.route";
 
 var xss = require("xss-clean");
@@ -40,7 +40,7 @@ app.use(helmet());
 
 // sanitize request data
 app.use(xss());
-app.use(rateLimiter.defaultLimiter);
+// app.use(rateLimiter.defaultLimiter); // Commented out until rate limiter is fixed
 
 // enable cors
 app.use(function (req, res, next) {

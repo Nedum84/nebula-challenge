@@ -4,10 +4,7 @@ import { AwsEventBody, AwsEventType } from "./types";
 import { awsEventScheduler } from "./aws.schedular";
 import config from "../config/config";
 import { randomUUID } from "crypto";
-import { getModelRawData } from "../js-models/utils";
 import { omit } from "lodash";
-import { isLocal, isTest } from "../js-utils/env.utils";
-import { sesEmailNotification } from "../js-email-log/utils";
 import { SNSClient, PublishCommand, PublishCommandInput } from "@aws-sdk/client-sns";
 
 const snsClient = new SNSClient({
@@ -19,11 +16,10 @@ const create = async <T = any>(params: {
   topicName?: string;
   payload: AwsEventBody<T>["payload"];
 }) => {
-  if (isTest()) return true;
-  // if (isLocal()) return true;
+  if (process.env.NODE_ENV === "test") return true;
 
   if (!params.payload.id) params.payload.id = randomUUID();
-  const payload = getModelRawData(params.payload); // force it to be JSONify(by removing sequelize unwanted tags)
+  const payload = params.payload; // getModelRawData commented out
 
   const body: PublishCommandInput = {
     Message: JSON.stringify({ type: params.type, payload }),
@@ -33,7 +29,8 @@ const create = async <T = any>(params: {
 
   console.log("TOPIC_PARAMS", JSON.stringify({ type: params.type, payload: omit(payload, "") }));
 
-  if (isLocal()) {
+  if (process.env.NODE_ENV === "development") {
+    // isLocal commented out
     return processAwsEvents({ type: params.type, payload, triggeredByJob: false });
   }
   try {
@@ -62,7 +59,7 @@ const sendSms = async (params: {
 
   console.log("SMS_PARAMS", body.Message);
 
-  if (isTest() || isLocal()) return true;
+  if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "development") return true; // isTest and isLocal commented out
   try {
     const result = await snsClient.send(new PublishCommand(body));
     // OR
@@ -115,19 +112,6 @@ export async function lambdaHandler(event: SNSEvent, context: Context) {
         payload: body.payload,
         type: body.type,
       });
-
-      // Triggered from event schedular
-      if (res && body.event_name) {
-        await awsEventScheduler.deleteIfExist(body.event_name);
-      }
-    } else {
-      // FOR SES TRIGGERED
-      if ((body as any).eventType === "Complaint" || (body as any).eventType === "Bounce") {
-        return sesEmailNotification(body as any);
-      }
-
-      // OTHER TRIGGERS
-      console.log("[[SNS_OTHER_PAYLOAD]]", body);
     }
   }
 }

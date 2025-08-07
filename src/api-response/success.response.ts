@@ -13,9 +13,6 @@ export class SuccessResponse {
     const success =
       statusCode === httpStatus.OK || statusCode === httpStatus.CREATED ? true : false;
 
-    // close any opened connections during the invocation
-    // this will wait for any in-progress queries to finish before closing the connections
-    // sequelize.connectionManager.close().catch();
 
     Object.keys(headers).forEach((key) => {
       res.header(key, headers[key]);

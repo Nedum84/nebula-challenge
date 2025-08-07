@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import httpStatus from "http-status";
-import { AggregateError, ValidationError } from "sequelize";
 import { CustomError } from "../api-response";
 import { isObject, isString } from "lodash";
 
@@ -10,9 +9,7 @@ import { isObject, isString } from "lodash";
 export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   const status = httpStatus.BAD_REQUEST;
 
-  if (err instanceof ValidationError || err instanceof AggregateError) {
-    err.message = err?.errors?.[0]?.message ?? err.message ?? err.name;
-  }
+  // Database error handling removed - Sequelize ValidationError/AggregateError checks removed
 
   const getErrorMessage = (() => {
     if (!isString(err.message) && isObject(err.message)) {
