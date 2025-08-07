@@ -4,9 +4,7 @@ import {
   ConfirmSignUpCommand,
   InitiateAuthCommand,
   GetUserCommand,
-  AdminSetUserPasswordCommand,
   AuthFlowType,
-  ChallengeNameType,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { createHmac } from "crypto";
 import config from "../config/config";
@@ -57,7 +55,7 @@ export interface LoginData {
 const register = async (data: RegisterData): Promise<{ message: string; user_id?: string }> => {
   try {
     const { email, preferred_username, name, password } = data;
-    
+
     const secretHash = generateSecretHash(email);
 
     const command = new SignUpCommand({
@@ -82,27 +80,30 @@ const register = async (data: RegisterData): Promise<{ message: string; user_id?
     });
 
     const response = await cognitoClient.send(command);
-    
+
     return {
       message: "Registration successful. Please check your email for verification code.",
       user_id: response.UserSub,
     };
   } catch (error: any) {
     console.error("Cognito registration error:", error);
-    
+
     if (error.name === "UsernameExistsException") {
       throw new BadRequestError("User with this email already exists");
     }
-    
+
     if (error.name === "InvalidPasswordException") {
       throw new BadRequestError("Password does not meet requirements");
     }
-    
+
     throw new BadRequestError(error.message || "Registration failed");
   }
 };
 
-const confirmSignUp = async (email: string, confirmationCode: string): Promise<{ message: string }> => {
+const confirmSignUp = async (
+  email: string,
+  confirmationCode: string
+): Promise<{ message: string }> => {
   try {
     const secretHash = generateSecretHash(email);
 
@@ -114,19 +115,19 @@ const confirmSignUp = async (email: string, confirmationCode: string): Promise<{
     });
 
     await cognitoClient.send(command);
-    
+
     return { message: "Email confirmation successful" };
   } catch (error: any) {
     console.error("Cognito confirmation error:", error);
-    
+
     if (error.name === "CodeMismatchException") {
       throw new BadRequestError("Invalid confirmation code");
     }
-    
+
     if (error.name === "ExpiredCodeException") {
       throw new BadRequestError("Confirmation code has expired");
     }
-    
+
     throw new BadRequestError(error.message || "Email confirmation failed");
   }
 };
@@ -169,24 +170,26 @@ const login = async (data: LoginData): Promise<AuthResponse> => {
     };
   } catch (error: any) {
     console.error("Cognito login error:", error);
-    
+
     if (error.name === "NotAuthorizedException") {
       throw new UnauthorizedError("Invalid credentials");
     }
-    
+
     if (error.name === "UserNotConfirmedException") {
-      throw new BadRequestError("User account is not confirmed. Please check your email for verification code.");
+      throw new BadRequestError(
+        "User account is not confirmed. Please check your email for verification code."
+      );
     }
-    
+
     if (error.name === "UserNotFoundException") {
       throw new UnauthorizedError("Invalid credentials");
     }
-    
+
     // If it's already our custom error, re-throw it
     if (error instanceof UnauthorizedError || error instanceof BadRequestError) {
       throw error;
     }
-    
+
     throw new UnauthorizedError(error.message || "Authentication failed");
   }
 };
@@ -219,11 +222,11 @@ const getUserDetails = async (accessToken: string): Promise<CognitoUser> => {
     };
   } catch (error: any) {
     console.error("Get user details error:", error);
-    
+
     if (error.name === "NotAuthorizedException") {
       throw new UnauthorizedError("Invalid or expired access token");
     }
-    
+
     throw new UnauthorizedError("Unable to retrieve user details");
   }
 };
