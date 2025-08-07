@@ -1,0 +1,340 @@
+service: iclass
+useDotenv: false # Load environment variables from .env files (default: false)
+configValidationMode: off # error | warn(default) | off
+
+# Using config serverless file @ https://github.com/andymac4182/serverless_example/blob/master/src/serverless.yml
+custom:
+  awsId: ${aws:accountId, '715828590857'}
+  stage: ${opt:stage, self:provider.stage}
+  awsRegion: ${opt:region, 'eu-west-2'}
+  bucketName: storage-${self:service}-${self:custom.stage}-${self:custom.awsId}
+  lambdaFuncPrefix: ${self:service}-${self:custom.stage} #e.g iclass-dev
+  jobLambdaFuncName: ${self:custom.lambdaFuncPrefix}-job #job is the function name e.g iclass-dev-job
+  apiLambdaFuncName: ${self:custom.lambdaFuncPrefix}-api #api is the function name e.g iclass-dev-api
+  lambdaFuncArnPrefix: arn:aws:lambda:${self:custom.awsRegion}:${self:custom.awsId}:function # e.g arn:aws:lambda:eu-west-2:715828590857:function
+  jobLambdaFuncArn: ${self:custom.lambdaFuncArnPrefix}:${self:custom.jobLambdaFuncName} #e.g arn:aws:lambda:eu-west-2:715828590857:function:iclass-dev-job
+  apiLambdaFuncArn: ${self:custom.lambdaFuncArnPrefix}:${self:custom.apiLambdaFuncName} #e.g arn:aws:lambda:eu-west-2:715828590857:function:iclass-dev-api
+  role: arn:aws:iam::${self:custom.awsId}:role/CustomLambdaRole
+  domain:
+    # "715828590857": dev.iclass.school #yeah
+    "715828590857": iclass.school
+  vpc:
+    "715828590857": "" #Without VPC
+    # "715828590857":
+    #   securityGroupIds:
+    #     - sg-06b64c0038110affc
+    #   subnetIds:
+    #     - subnet-0e184a103fb640759
+    #     - subnet-07bfd54485c7138ff
+    #     - subnet-0d06c18c03027a96e
+
+  # esbuild:
+  # config: './esbuild.config.cjs' # external config file
+  # bundle: true
+  # external:
+  #   - 'mock-aws-s3'
+  #   - 'pg-hstore'
+  #   - 'pg'
+  #   - 'sequelize-cli'
+  #   - 'nock'
+  #   - 'sharp'
+  #   - '@mapbox/node-pre-gyp'
+  #   - 'bcrypt'
+  # exclude:
+  #   - 'aws-sdk'
+  # nativeZip: true
+  # keepOutputDirectory: true
+
+provider:
+  name: aws
+  runtime: nodejs18.x # fix RSA PADDING error before upgrading to 18.x (TypeError: RSA_PKCS1_PADDING is no longer supported for private decryption, this can be reverted with --security-revert=CVE-2023-46809). more here: https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/$252Faws$252Flambda$252Ficlass-dev-api
+  memorySize: 128
+  timeout: 30
+  httpApi:
+    payload: "2.0" # Ensure HTTP API uses v2
+    cors: false
+  # minimumCompressionSize: 0 # Ensure streaming is not compressed
+  apiGateway:
+    binaryMediaTypes:
+      - "image/png"
+      - "image/jpeg"
+      - "multipart/form-data"
+      - "*/*"
+  stage: ${self:custom.stage}
+  region: ${self:custom.awsRegion}
+  lambdaHashingVersion: "20201221"
+  tags:
+    service: iclass
+    company: Iclass Education Ltd.
+    project: backendApp
+  tracing:
+    apiGateway: true
+    lambda: true
+  logs:
+    restApi:
+      level: ERROR
+  deploymentBucket:
+    name: deploys.${self:custom.awsId}.${self:custom.awsRegion}
+    serverSideEncryption: AES256
+    versioning: false
+  vpc: ${self:custom.vpc.${self:custom.awsId}}
+  iam:
+    role: ${self:custom.role}
+  environment:
+    AWS_S3_BUCKET_NAME: !Ref S3BucketAssets
+    AWS_S3_DISTRIBUTION: !GetAtt CloudFrontDistribution.DomainName
+    SERVICE_LAMBDA_ROLE: ${self:custom.role}
+    JOB_LAMBDA_ARN: ${self:custom.jobLambdaFuncArn} # "!GetAtt JobLambdaFunction.Arn" not working (causing circular dependency)
+    API_LAMBDA_ARN: ${self:custom.apiLambdaFuncArn}
+    EVENT_SCHEDULAR_GROUP_NAME: !Ref IclassSchedulerEventGroup #!ImportValue ${self:custom.stage}-iclassSchedularGroupName
+    SNS_TOPIC_NAME: !GetAtt IclassSnsTopic.TopicName #!ImportValue ${self:custom.stage}-iclassSnsTopicName
+    SNS_TOPIC_ARN: !Ref IclassSnsTopic #!ImportValue ${self:custom.stage}-iclassSnsTopicArn
+    SQS_QUEUE_URL: !GetAtt IclassSqsQueue.QueueUrl #!ImportValue ${self:custom.stage}-iclassSqsQueueUrl # !GetAtt IclassSqsQueue.QueueUrl
+    SQS_QUEUE_ARN: !GetAtt IclassSqsQueue.Arn #!ImportValue ${self:custom.stage}-iclassSqsQueueArn
+    # NODE_OPTIONS: '--enable-source-maps' # use source map if available
+    # API_FUNCTION_URL: !ImportValue ${self:custom.stage}-ApiFunctionUrl
+    # STREAM_FUNCTION_URL: !ImportValue ${self:custom.stage}-StreamFunctionUrl
+
+plugins:
+  # - serverless-offline
+  - serverless-deployment-bucket
+  # - serverless-esbuild # enables esbuild plugin (https://dev.to/slootjes/optimizing-typescript-packages-in-serverless-framework-with-esbuild-1ol4)
+
+package:
+  # individually: true # an optimized package per function
+  exclude:
+    - "node_modules/aws-sdk/**"
+    - "node_modules/typescript/**"
+    - "**/*.map"
+
+functions:
+  api:
+    handler: src/aws/lambda-handler.handler
+    timeout: 28 # 30 seconds
+    memorySize: 256
+    dependsOn:
+      - S3BucketAssets
+    events:
+      - http:
+          path: /v1
+          method: ANY
+          cors: false
+      - http:
+          path: /v1/{proxy+}
+          method: ANY
+          cors: false
+
+    url:
+      invokeMode: BUFFERED # RESPONSE_STREAM, BUFFERED
+      cors:
+        allowedOrigins:
+          - "*"
+        allowedHeaders:
+          - "Origin"
+          - "Accept"
+          - "X-Requested-With"
+          - "Authorization"
+          - "Content-Type"
+          - "w-frsc"
+          - "-w-x-api-source"
+          - "device-info"
+        allowedMethods:
+          - "*"
+        allowCredentials: true
+        exposedResponseHeaders:
+          - "*"
+        maxAge: 6000 # In seconds
+
+  # This is invoked with lambda streaming
+  streamApp:
+    handler: src/aws/lambda-handler.functionUrlStreamHandler
+    timeout: 300 # 5 mins
+    memorySize: 512
+    url:
+      invokeMode: RESPONSE_STREAM # RESPONSE_STREAM, BUFFERED
+      cors:
+        allowedOrigins:
+          - "*"
+          # - https://url1.com
+          # - https://url2.com
+        allowedHeaders:
+          - "Origin"
+          - "Accept"
+          - "X-Requested-With"
+          - "Authorization"
+          - "Content-Type"
+          - "w-frsc"
+          - "-w-x-api-source"
+          - "device-info"
+        allowedMethods:
+          - "*"
+        allowCredentials: true
+        exposedResponseHeaders:
+          - "*"
+        maxAge: 6000 # In seconds
+
+  job: # long running process (separate fn because api gateway auto limits 'api' fn to 30s)
+    handler: src/aws/lambda-handler.handler
+    timeout: 300 # 5 minutes
+    memorySize: 1024 # OR 1536, 1024, 512
+    dependsOn:
+      - S3BucketAssets
+      - IclassSnsTopic
+      - IclassSqsQueue
+    events:
+      - s3:
+          bucket: ${self:custom.bucketName}
+          existing: true
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: image/ # Cannot specify more than one prefix rule in a filter
+            # - suffix: .jpg
+      - s3:
+          bucket: ${self:custom.bucketName}
+          existing: true
+          event: s3:ObjectRemoved:*
+      - sns:
+          arn: !Ref IclassSnsTopic #!ImportValue ${self:custom.stage}-iclassSnsTopicArn
+          topicName: ${self:custom.stage}-iclassSnsTopicName # `!ImportValue ${self:custom.stage}-iclassSnsTopicName` not working(don't know why)
+      - sqs:
+          arn: !GetAtt IclassSqsQueue.Arn #!ImportValue ${self:custom.stage}-iclassSqsQueueArn
+      - schedule:
+          rate: rate(2 hours)
+          input:
+            fn: cmd:reset_client_cache
+      - schedule:
+          # rate: rate(1 hour)
+          rate: cron(0 0-23 * * ? *)
+          input:
+            fn: cmd:study_reminder_notification
+
+resources:
+  Resources:
+    S3BucketAssets: #Can be any name
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.bucketName}
+        ### No more AccessControl
+        # AccessControl: PublicRead # (ACL) ==> PublicRead OR Private
+        ###  replace it with...
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+        OwnershipControls:
+          Rules:
+            - ObjectOwnership: ObjectWriter # (ObjectWriter OR BucketOwnerEnforced)
+        VersioningConfiguration:
+          Status: Enabled
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - "*"
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+                - HEAD
+              AllowedOrigins:
+                - "*"
+    CloudFrontDistribution: #Can be any name
+      Type: AWS::CloudFront::Distribution
+      DependsOn:
+        - S3BucketAssets
+      Properties:
+        DistributionConfig:
+          Origins:
+            - DomainName:
+                "Fn::GetAtt":
+                  - S3BucketAssets
+                  - RegionalDomainName
+              Id:
+                Ref: S3BucketAssets
+              CustomOriginConfig:
+                OriginProtocolPolicy: http-only
+          Enabled: "true"
+          Comment: Storage-${self:service}-${self:custom.stage}-${self:custom.awsId}
+          DefaultCacheBehavior:
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            CachedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            Compress: true
+            TargetOriginId:
+              Ref: S3BucketAssets
+            ForwardedValues:
+              QueryString: "false"
+              Cookies:
+                Forward: none
+            ViewerProtocolPolicy: redirect-to-https
+          PriceClass: PriceClass_All
+          ViewerCertificate:
+            CloudFrontDefaultCertificate: "true"
+    # Event Scheduler
+    IclassSchedulerEventGroup:
+      Type: AWS::Scheduler::ScheduleGroup
+      Properties:
+        Name: ${self:custom.stage}-iclassSchedularGroup
+    # SNS
+    IclassSnsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        KmsMasterKeyId: alias/aws/sns
+        DisplayName: Iclass SNS Topic
+        TopicName: ${self:custom.stage}-iclassSnsTopic
+    # SQS Queues
+    IclassSqsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        KmsMasterKeyId: alias/aws/sqs
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt IclassSqsDeadLetterQueue.Arn
+          maxReceiveCount: 3
+        VisibilityTimeout: 300 # 5 minutes
+    IclassSqsDeadLetterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        KmsMasterKeyId: alias/aws/sqs
+
+  # Outputs is like creating variables you expose to be accessed/referenced by the application using e.g "Fn::ImportValue": `NAME_OF_THE_EXPORT_NAME` ${self:custom.stage}-iclassSchedularGroupName
+  Outputs:
+    # Event schedular Exports
+    IclassSchedulerEventGroupArn:
+      Description: Schedular group ARN
+      Value: !GetAtt IclassSchedulerEventGroup.Arn
+      Export:
+        Name: ${self:custom.stage}-iclassSchedularGroupArn
+    IclassSchedulerEventGroupName:
+      Description: Schedular group name
+      Value: !Ref IclassSchedulerEventGroup #Ref returns the Name attribute of the schedule group https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-scheduler-schedulegroup.html
+      Export:
+        Name: ${self:custom.stage}-iclassSchedularGroupName
+    # SNS Exports
+    IclassSnsTopicArn:
+      Value: !Ref IclassSnsTopic # !Ref IclassSnsTopic OR !GetAtt IclassSnsTopic.TopicArn
+      Export:
+        Name: ${self:custom.stage}-iclassSnsTopicArn
+    IclassSnsTopicName:
+      Value: !GetAtt IclassSnsTopic.TopicName
+      Export:
+        Name: ${self:custom.stage}-iclassSnsTopicName
+    # SQS Exports @ https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sqs-queue.html
+    IclassSqsQueueArn:
+      Value: !GetAtt IclassSqsQueue.Arn
+      Export:
+        Name: ${self:custom.stage}-iclassSqsQueueArn
+    IclassSqsQueueUrl:
+      Value: !GetAtt IclassSqsQueue.QueueUrl # !Ref IclassSqsQueue OR !GetAtt IclassSqsQueue.QueueUrl
+      Export:
+        Name: ${self:custom.stage}-iclassSqsQueueUrl
+    # ApiFunctionUrl:
+    #   Value: !GetAtt ApiLambdaFunction.Url
+    #   Export:
+    #     Name: ${self:custom.stage}-ApiFunctionUrl
+    # StreamFunctionUrl:
+    #   Value: !GetAtt StreamAppLambdaFunction.Url
+    #   Export:
+    #     Name: ${self:custom.stage}-StreamFunctionUrl
