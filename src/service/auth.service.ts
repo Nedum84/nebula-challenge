@@ -1,5 +1,4 @@
 import {
-  CognitoIdentityProviderClient,
   SignUpCommand,
   ConfirmSignUpCommand,
   InitiateAuthCommand,
@@ -9,14 +8,7 @@ import {
 import { createHmac } from "crypto";
 import config from "../config/config";
 import { BadRequestError, UnauthorizedError } from "../api-response";
-
-const cognitoClient = new CognitoIdentityProviderClient({
-  region: "eu-north-1",
-  credentials: {
-    accessKeyId: config.AWS_ACCESS_KEY_ID,
-    secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
-  },
-});
+import { cognitoClient } from "../database";
 
 // Generate secret hash for Cognito client
 const generateSecretHash = (username: string): string => {
@@ -235,7 +227,7 @@ const verifyAccessToken = async (accessToken: string): Promise<CognitoUser> => {
   return await getUserDetails(accessToken);
 };
 
-export const cognitoService = {
+export const authService = {
   register,
   confirmSignUp,
   login,

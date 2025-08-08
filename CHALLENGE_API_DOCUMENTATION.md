@@ -542,8 +542,7 @@ src/
 │   └── leaderboard.controller.ts
 ├── service/             # Business logic
 │   ├── auth.service.ts
-│   ├── cognito.service.ts
-│   ├── dynamodb.service.ts
+│   ├── leaderboard.service.ts
 │   └── websocket.service.ts
 ├── validation/          # Input validation schemas
 │   ├── auth.validation.ts

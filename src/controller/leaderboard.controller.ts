@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { SuccessResponse } from "../api-response";
-import { dynamoDBService } from "../service/dynamodb.service";
+import { leaderboardService } from "../service/leaderboard.service";
 import { webSocketService } from "../service/websocket.service";
 import { CognitoUserContext } from "../middlewares/auth.middleware";
 
@@ -13,7 +13,7 @@ const submitScore = async (req: Request, res: Response) => {
   }
 
   // Submit score to DynamoDB
-  const result = await dynamoDBService.submitScore({
+  const result = await leaderboardService.submitScore({
     user_id: user.user_id,
     user_name: user.name,
     score: score,
@@ -40,14 +40,14 @@ const submitScore = async (req: Request, res: Response) => {
 const getLeaderboard = async (req: Request, res: Response) => {
   const limit = parseInt(req.query.limit as string) || 10;
 
-  const result = await dynamoDBService.getTopScores(limit);
+  const result = await leaderboardService.getTopScores(limit);
 
   SuccessResponse.ok(res, result, "Leaderboard retrieved successfully");
 };
 
 const getTopScore = async (req: Request, res: Response) => {
   // Get top 1 score as requested in the challenge
-  const result = await dynamoDBService.getTopScores(1);
+  const result = await leaderboardService.getTopScores(1);
 
   SuccessResponse.ok(res, result, "Top score retrieved successfully");
 };
@@ -59,7 +59,7 @@ const getUserScores = async (req: Request, res: Response) => {
     throw new Error("User not found in context");
   }
 
-  const result = await dynamoDBService.getUserScores(user.user_id);
+  const result = await leaderboardService.getUserScores(user.user_id);
 
   SuccessResponse.ok(res, result, "User scores retrieved successfully");
 };
@@ -71,7 +71,7 @@ const getUserBestScore = async (req: Request, res: Response) => {
     throw new Error("User not found in context");
   }
 
-  const result = await dynamoDBService.getUserBestScore(user.user_id);
+  const result = await leaderboardService.getUserBestScore(user.user_id);
 
   SuccessResponse.ok(res, result || {}, "User best score retrieved successfully");
 };

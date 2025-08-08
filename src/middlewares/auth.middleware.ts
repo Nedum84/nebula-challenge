@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { UnauthorizedError } from "../api-response";
 import { AsyncLocalStorage } from "async_hooks";
-import { cognitoService, CognitoUser } from "../service/cognito.service";
+import { authService, CognitoUser } from "../service/auth.service";
 
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
@@ -19,7 +19,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     }
 
     // Verify Cognito access token and get user details
-    const user = await cognitoService.verifyAccessToken(accessToken);
+    const user = await authService.verifyAccessToken(accessToken);
 
     
     // Set the user context and continue
@@ -48,7 +48,7 @@ export const optionalAuthMiddleware = async (req: Request, res: Response, next: 
 
     try {
       // Try to verify token, but don't fail if it's invalid
-      const user = await cognitoService.verifyAccessToken(accessToken);
+      const user = await authService.verifyAccessToken(accessToken);
 
       
       // Set the user context and continue

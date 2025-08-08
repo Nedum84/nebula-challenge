@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { SuccessResponse } from "../api-response";
-import { cognitoService } from "../service/cognito.service";
+import { authService } from "../service/auth.service";
 import { CognitoUserContext } from "../middlewares/auth.middleware";
 
 const register = async (req: Request, res: Response) => {
   const { name, email, preferred_username, password } = req.body;
 
-  const result = await cognitoService.register({ 
+  const result = await authService.register({ 
     name, 
     email, 
     preferred_username, 
@@ -19,7 +19,7 @@ const register = async (req: Request, res: Response) => {
 const confirmSignUp = async (req: Request, res: Response) => {
   const { email, confirmationCode } = req.body;
 
-  const result = await cognitoService.confirmSignUp(email, confirmationCode);
+  const result = await authService.confirmSignUp(email, confirmationCode);
 
   SuccessResponse.ok(res, result, result.message);
 };
@@ -27,7 +27,7 @@ const confirmSignUp = async (req: Request, res: Response) => {
 const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  const result = await cognitoService.login({ email, password });
+  const result = await authService.login({ email, password });
 
   SuccessResponse.ok(res, result, "Login successful");
 };
