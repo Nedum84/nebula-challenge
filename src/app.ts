@@ -74,7 +74,6 @@ app.get("/", (req, res) => {
 // Routing....
 app.use("/v1/auth", authRoutes);
 app.use("/v1/leaderboard", leaderboardRoutes);
-app.use("/v1/[routes]" /** Routes HERE */);
 
 app.all("*", async (req, res) => {
   throw new NotFoundError(`Route[${req.method}::${req.url}] not found!`);
