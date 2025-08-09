@@ -27,11 +27,10 @@ export class LeaderboardService {
         Item: entry,
       }));
 
-      console.log(`Score submitted: ${data.user_name} - ${data.score}`);
-      return entry;
+        return entry;
     } catch (error: any) {
-      console.error("Leaderboard submit score error:", error);
-      throw new Error(`Failed to submit score: ${error.message}`);
+        console.error("Leaderboard submit score error:", error);
+        throw new Error(`Failed to submit score: ${error.message}`);
     }
   }
 
@@ -56,8 +55,8 @@ export class LeaderboardService {
 
       return sortedEntries;
     } catch (error: any) {
-      console.error("Leaderboard get top scores error:", error);
-      throw new Error(`Failed to retrieve leaderboard: ${error.message}`);
+        console.error("Leaderboard get top scores error:", error);
+        throw new Error(`Failed to retrieve leaderboard: ${error.message}`);
     }
   }
 
@@ -81,7 +80,6 @@ export class LeaderboardService {
         }));
       } catch (gsiError) {
         console.log("GSI not available, falling back to scan");
-        
         // Fallback to scan with filter
         response = await docClient.send(new ScanCommand({
           TableName: TABLES.LEADERBOARD.name,
@@ -102,8 +100,8 @@ export class LeaderboardService {
 
       return userScores;
     } catch (error: any) {
-      console.error("Leaderboard get user scores error:", error);
-      throw new Error(`Failed to retrieve user scores: ${error.message}`);
+        console.error("Leaderboard get user scores error", error);
+        throw new Error(`Failed to retrieve user scores: ${error.message}`);
     }
   }
 
@@ -125,8 +123,8 @@ export class LeaderboardService {
 
       return bestScore;
     } catch (error: any) {
-      console.error("Leaderboard get user best score error:", error);
-      throw new Error(`Failed to retrieve user best score: ${error.message}`);
+        console.error("Leaderboard get user best score error", error);
+        throw new Error(`Failed to retrieve user best score: ${error.message}`);
     }
   }
 
@@ -165,8 +163,8 @@ export class LeaderboardService {
         totalPlayers: uniqueUsers.size,
       };
     } catch (error: any) {
-      console.error("Leaderboard get stats error:", error);
-      throw new Error(`Failed to retrieve leaderboard statistics: ${error.message}`);
+        console.error("Leaderboard get stats error", error);
+        throw new Error(`Failed to retrieve leaderboard statistics: ${error.message}`);
     }
   }
 
@@ -221,8 +219,8 @@ export class LeaderboardService {
         bestScore: userScore,
       };
     } catch (error: any) {
-      console.error("Leaderboard get user ranking error:", error);
-      throw new Error(`Failed to retrieve user ranking: ${error.message}`);
+        console.error("Leaderboard get user ranking error", error);
+        throw new Error(`Failed to retrieve user ranking: ${error.message}`);
     }
   }
 }

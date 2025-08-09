@@ -37,7 +37,6 @@ const sendHighScoreNotification = async (
     });
 
     await webSocketClient.send(command);
-    
     console.log(`High score notification sent to connection ${connectionId}:`, notification);
     return true;
   } catch (error: any) {

@@ -9,7 +9,6 @@ import { isObject, isString } from "lodash";
 export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   const status = httpStatus.BAD_REQUEST;
 
-  // Database error handling removed - Sequelize ValidationError/AggregateError checks removed
 
   const getErrorMessage = (() => {
     if (!isString(err.message) && isObject(err.message)) {
@@ -17,7 +16,7 @@ export const errorHandler = (err: Error, req: Request, res: Response, next: Next
       const message = msg?.data?.message || msg?.data?.Message || msg?.statusText;
       if (message) return message;
 
-      console.log("UNKOWN_ERROR", msg); //TODO: send alert to slack
+      console.log("UNKOWN_ERROR", msg);
       return "Something went wrong. Try again";
     }
     return err.message;

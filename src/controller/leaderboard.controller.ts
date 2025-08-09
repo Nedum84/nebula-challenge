@@ -7,7 +7,7 @@ import { CognitoUserContext } from "../middlewares/auth.middleware";
 const submitScore = async (req: Request, res: Response) => {
   const { score } = req.body;
   const user = CognitoUserContext.use();
-  
+
   if (!user) {
     throw new Error("User not found in context");
   }
@@ -22,11 +22,7 @@ const submitScore = async (req: Request, res: Response) => {
   // Send WebSocket notification if score > 1000
   if (score > 1000) {
     try {
-      await webSocketService.sendHighScoreNotificationToAll(
-        user.user_id,
-        user.name,
-        score
-      );
+      await webSocketService.sendHighScoreNotificationToAll(user.user_id, user.name, score);
       console.log(`High score notification sent for ${user.name} with score ${score}`);
     } catch (error) {
       console.error("Failed to send WebSocket notification:", error);
@@ -45,16 +41,16 @@ const getLeaderboard = async (req: Request, res: Response) => {
   SuccessResponse.ok(res, result, "Leaderboard retrieved successfully");
 };
 
-const getTopScore = async (req: Request, res: Response) => {
+const getTopScore = async (_req: Request, res: Response) => {
   // Get top 1 score as requested in the challenge
   const result = await leaderboardService.getTopScores(1);
 
   SuccessResponse.ok(res, result, "Top score retrieved successfully");
 };
 
-const getUserScores = async (req: Request, res: Response) => {
+const getUserScores = async (_req: Request, res: Response) => {
   const user = CognitoUserContext.use();
-  
+
   if (!user) {
     throw new Error("User not found in context");
   }
@@ -66,7 +62,7 @@ const getUserScores = async (req: Request, res: Response) => {
 
 const getUserBestScore = async (req: Request, res: Response) => {
   const user = CognitoUserContext.use();
-  
+
   if (!user) {
     throw new Error("User not found in context");
   }

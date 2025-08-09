@@ -4,7 +4,7 @@ import { AsyncLocalStorage } from "async_hooks";
 import { authService, CognitoUser } from "../service/auth.service";
 
 
-export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware = async (req: Request, _res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers["authorization"];
 
@@ -32,7 +32,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 };
 
 // Optional middleware for routes that can work with or without authentication
-export const optionalAuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const optionalAuthMiddleware = async (req: Request, _res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers["authorization"];
 
