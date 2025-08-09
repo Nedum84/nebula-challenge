@@ -679,6 +679,47 @@ npm run sls:offline
 - `serverless info --stage <stage>` - Get deployment information
 - `serverless logs --function api --stage <stage>` - View function logs
 
+**Function Invocation with Commands:**
+```bash
+# Database Commands
+sls invoke --function job -d "db:init" --stage dev         # Initialize database
+sls invoke --function job -d "db:migrate" --stage dev      # Run database migrations
+sls invoke --function job -d "db:status" --stage dev       # Check database status
+sls invoke --function job -d "db:drop" --stage dev         # Drop database tables
+sls invoke --function job -d "db:reset" --stage dev        # Reset database
+sls invoke --function job -d "db:clear" --stage dev        # Clear all data
+
+# Seeding Commands
+sls invoke --function job -d "db:seed:all" --stage dev           # Seed all tables
+sls invoke --function job -d "db:seed:leaderboard" --stage dev   # Seed leaderboard
+sls invoke --function job -d "db:seed:highscores" --stage dev    # Seed high scores
+sls invoke --function job -d "db:seed:user" --stage dev          # Seed user data
+
+# Cognito Management
+sls invoke --function job -d "cognito:list" --stage dev          # List Cognito users
+sls invoke --function job -d "cognito:clear" --stage dev         # Clear all users
+sls invoke --function job -d "cognito:delete" --stage dev        # Delete specific user
+
+# System Commands
+sls invoke --function job -d "system:status" --stage dev         # Check system status
+sls invoke --function job -d "help" --stage dev                  # Show help
+```
+
+**Examples:**
+```bash
+# Initialize database on production
+sls invoke --function job -d "db:init" --stage prod
+
+# Check system status on development
+sls invoke --function job -d "system:status" --stage dev
+
+# Seed all data for testing
+sls invoke --function job -d "db:seed:all" --stage dev
+
+# Clear development data
+sls invoke --function job -d "db:clear" --stage dev
+```
+
 ---
 
 ## 🛠️ CLI Commands
