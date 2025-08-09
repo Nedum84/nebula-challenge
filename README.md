@@ -83,11 +83,27 @@ The server will start on http://localhost:5500
 
 ### Development Mode
 
+**Option 1: Express Server (Local)**
 For development with auto-reload:
 
 ```bash
 npm run dev
 ```
+
+**Option 2: Serverless Offline (Local AWS Lambda simulation)**
+Run locally with serverless-offline to simulate AWS Lambda environment:
+
+```bash
+# Install serverless offline plugin
+npm install --save-dev serverless-offline
+
+# Start serverless offline
+npm run serverless:offline
+# or
+sls offline
+```
+
+This starts the API at http://localhost:3000 and simulates AWS Lambda functions locally.
 
 ## 📚 API Endpoints
 
@@ -600,23 +616,120 @@ src/
 
 ### Local Development
 
+**Express Server:**
 ```bash
 npm install
 npm run build
 npm start
 ```
 
+**Serverless Offline:**
+```bash
+npm install
+npm run sls:offline
+```
+
 ### AWS Lambda Deployment
 
+**Using Serverless Framework directly:**
 ```bash
-# Install Serverless Framework
+# Install Serverless Framework globally
 npm install -g serverless
 
-# Deploy to AWS
+# Deploy to development
 serverless deploy --stage dev
 
 # Deploy to production
 serverless deploy --stage prod
+
+# Remove deployment
+serverless remove --stage dev
+```
+
+**Using npm scripts:**
+```bash
+# Deploy to development
+npm run sls:deploy
+
+# Remove deployment
+npm run sls:remove
+
+# Invoke function locally
+npm run sls:invoke
+
+# Start local serverless environment
+npm run sls:offline
+```
+
+### Available Serverless Commands
+
+**Development & Testing:**
+- `npm run sls:offline` - Start serverless offline (localhost:3000)
+- `npm run sls:invoke` - Invoke API function locally
+- `serverless offline --stage <stage>` - Start with specific stage
+
+**Deployment:**
+- `npm run sls:deploy` - Deploy to dev stage
+- `serverless deploy --stage <stage>` - Deploy to specific stage
+- `serverless deploy --stage prod` - Deploy to production
+
+**Management:**
+- `npm run sls:remove` - Remove deployment from dev stage  
+- `serverless remove --stage <stage>` - Remove specific deployment
+- `serverless info --stage <stage>` - Get deployment information
+- `serverless logs --function api --stage <stage>` - View function logs
+
+---
+
+## 🛠️ CLI Commands
+
+The application includes a comprehensive CLI with various commands for database management, AWS Cognito operations, and development utilities.
+
+### Production-Safe Commands
+```bash
+npm run cli db:init         # Initialize database tables
+npm run cli db:status       # Check database status
+npm run cli system:status   # Check system health
+npm run cli help           # Show available commands
+```
+
+### Development Commands
+⚠️ **Warning**: These commands can modify or delete data. Use with caution in development only.
+
+```bash
+# Database Management
+npm run cli db:drop         # Drop all database tables
+npm run cli db:reset        # Reset database (drop + init)
+npm run cli db:clear        # Clear all data from tables
+npm run cli db:seed:all     # Seed all tables with sample data
+
+# Specific Seeding
+npm run cli db:seed:leaderboard    # Seed leaderboard table
+npm run cli db:seed:highscores     # Seed high scores
+npm run cli db:seed:user           # Seed user data
+
+# AWS Cognito Management
+npm run cli cognito:list           # List all users in Cognito
+npm run cli cognito:clear          # Clear all users from Cognito
+npm run cli cognito:delete <email> # Delete specific user
+
+# Mock Commands (Local Development)
+# Additional mock commands available for local testing
+```
+
+### Usage Examples
+```bash
+# Check if everything is set up correctly
+npm run cli system:status
+
+# Initialize fresh database
+npm run cli db:init
+
+# Seed with sample data for development
+npm run cli db:seed:all
+
+# Clean up development data
+npm run cli db:clear
 ```
 
 ---
