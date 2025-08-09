@@ -40,7 +40,7 @@ export class SeedData {
       entries.push({
         id: randomUUID(),
         user_id: `${user.id}_${i}`,
-        user_name: `${user.name}${i > sampleUsers.length - 1 ? ` #${Math.floor(i / sampleUsers.length) + 1}` : ''},`
+        user_name: `${user.name}${i > sampleUsers.length - 1 ? ` #${Math.floor(i / sampleUsers.length) + 1}` : ''}`,
         score: baseScore,
         timestamp,
       });

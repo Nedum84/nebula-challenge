@@ -1,5 +1,4 @@
 import { AwsEventBody, AwsEventType } from "./types";
-import { awsCustomEventstils } from "./utils";
 
 export async function processAwsEvents(
   data: AwsEventBody & {
@@ -12,9 +11,6 @@ export async function processAwsEvents(
   console.log("[[JOB_TRIGGER]]==>", { type, payload });
 
   try {
-    // If email template is associated with this event, fire the email
-    await awsCustomEventstils.sendEmailFromDb(id, payload as any, type);
-
     await processJobEvent(type, id, payload);
 
     return true;
@@ -33,7 +29,6 @@ export async function processAwsEvents(
 
     if (error instanceof Error) throw error;
     throw new Error(error);
-
   } finally {
   }
 }
