@@ -21,8 +21,8 @@ const dynamoClient = new DynamoDBClient({
     accessKeyId: config.AWS_ACCESS_KEY_ID,
     secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
   },
-  ...(isLocal() && {
-    endpoint: "http://localhost:8000",
+  ...(config.USE_LOCAL_DYNAMODB && {
+    endpoint: config.DYNAMODB_LOCAL_ENDPOINT,
   }),
 });
 

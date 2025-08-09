@@ -690,10 +690,10 @@ The application includes a comprehensive CLI with various commands for database 
 ### Production-Safe Commands
 
 ```bash
-npm run cli db:init         # Initialize database tables
-npm run cli db:status       # Check database status
-npm run cli system:status   # Check system health
-npm run cli help           # Show available commands
+npm run cli s:cli db:init         # Initialize database tables
+npm run cli s:cli db:status       # Check database status
+npm run cli s:cli system:status   # Check system health
+npm run cli s:cli help           # Show available commands
 ```
 
 ### Development Commands
@@ -702,20 +702,20 @@ npm run cli help           # Show available commands
 
 ```bash
 # Database Management
-npm run cli db:drop         # Drop all database tables
-npm run cli db:reset        # Reset database (drop + init)
-npm run cli db:clear        # Clear all data from tables
-npm run cli db:seed:all     # Seed all tables with sample data
+npm run cli s:cli db:drop         # Drop all database tables
+npm run cli s:cli db:reset        # Reset database (drop + init)
+npm run cli s:cli db:clear        # Clear all data from tables
+npm run cli s:cli db:seed:all     # Seed all tables with sample data
 
 # Specific Seeding
-npm run cli db:seed:leaderboard    # Seed leaderboard table
-npm run cli db:seed:highscores     # Seed high scores
-npm run cli db:seed:user           # Seed user data
+npm run cli s:cli db:seed:leaderboard    # Seed leaderboard table
+npm run cli s:cli db:seed:highscores     # Seed high scores
+npm run cli s:cli db:seed:user           # Seed user data
 
 # AWS Cognito Management
-npm run cli cognito:list           # List all users in Cognito
-npm run cli cognito:clear          # Clear all users from Cognito
-npm run cli cognito:delete <email> # Delete specific user
+npm run cli s:cli cognito:list           # List all users in Cognito
+npm run cli s:cli cognito:clear          # Clear all users from Cognito
+npm run cli s:cli cognito:delete <email> # Delete specific user
 
 # Mock Commands (Local Development)
 # Additional mock commands available for local testing
@@ -725,16 +725,16 @@ npm run cli cognito:delete <email> # Delete specific user
 
 ```bash
 # Check if everything is set up correctly
-npm run cli system:status
+npm run cli s:cli system:status
 
 # Initialize fresh database
-npm run cli db:init
+npm run cli s:cli db:init
 
 # Seed with sample data for development
-npm run cli db:seed:all
+npm run cli s:cli db:seed:all
 
 # Clean up development data
-npm run cli db:clear
+npm run cli s:cli db:clear
 ```
 
 ---
@@ -798,6 +798,53 @@ The project includes a complete React TypeScript frontend application that provi
 ✅ **Live Leaderboard** - Real-time leaderboard with WebSocket updates
 ✅ **Responsive Design** - TailwindCSS for mobile-first design
 ✅ **Toast Notifications** - User-friendly feedback with react-hot-toast
+
+### 📸 Application Screenshots
+
+Here are screenshots of the complete frontend application showcasing all the key features:
+
+> **Note**: To display screenshots properly, you may need to rename the files in the `screenshots/` directory. See `RENAME_SCREENSHOTS.md` for instructions.
+
+**Key Features Demonstrated:**
+- 🔐 **Secure Authentication** - Login/Register with validation and email confirmation (123456 for testing)
+- 📊 **Interactive Dashboard** - Real-time user statistics and game metrics
+- 🏆 **Live Leaderboard** - Dynamic rankings with user highlighting and filtering
+- 🎯 **Score Submission** - Intuitive score entry with achievement notifications
+- 👤 **User Profile** - Complete account management and score history
+- 📱 **Responsive Design** - Mobile-first UI with TailwindCSS styling
+
+#### Authentication Flow
+<div align="center">
+<img src="screenshots/01-login-page.png" alt="Login Page" width="800"/>
+<p><em>Login Page - Clean and modern authentication interface</em></p>
+</div>
+
+<div align="center">
+<img src="screenshots/02-register-page.png" alt="Register Page" width="800"/>
+<p><em>Registration Page - User registration with validation</em></p>
+</div>
+
+#### Main Application
+<div align="center">
+<img src="screenshots/03-dashboard.png" alt="Dashboard" width="800"/>
+<p><em>Dashboard - User statistics, best scores, and quick actions</em></p>
+</div>
+
+<div align="center">
+<img src="screenshots/04-leaderboard.png" alt="Leaderboard" width="800"/>
+<p><em>Leaderboard - Real-time rankings with user highlighting</em></p>
+</div>
+
+#### Game Features
+<div align="center">
+<img src="screenshots/05-submit-score.png" alt="Submit Score" width="800"/>
+<p><em>Score Submission - Interactive form with achievement notifications</em></p>
+</div>
+
+<div align="center">
+<img src="screenshots/06-profile.png" alt="User Profile" width="800"/>
+<p><em>User Profile - Account information and complete score history</em></p>
+</div>
 
 ### Frontend Structure
 ```
