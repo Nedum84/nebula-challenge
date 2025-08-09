@@ -4,8 +4,8 @@ configValidationMode: off # error | warn(default) | off
 
 # Using config serverless file @ https://github.com/andymac4182/serverless_example/blob/master/src/serverless.yml
 custom:
-  awsId: ${aws:accountId, '893130088846'}
-  stage: ${opt:stage, self:provider.stage}
+  awsId: '893130088846'
+  stage: ${opt:stage, 'dev'}
   awsRegion: ${opt:region, 'eu-north-1'}
   bucketName: storage-${self:service}-${self:custom.stage}-${self:custom.awsId}
   lambdaFuncPrefix: ${self:service}-${self:custom.stage} #e.g iclass-dev
@@ -27,22 +27,28 @@ custom:
     #     - subnet-07bfd54485c7138ff
     #     - subnet-0d06c18c03027a96e
 
-  # esbuild:
-  # config: './esbuild.config.cjs' # external config file
-  # bundle: true
-  # external:
-  #   - 'mock-aws-s3'
-  #   - 'pg-hstore'
-  #   - 'pg'
-  #   - 'sequelize-cli'
-  #   - 'nock'
-  #   - 'sharp'
-  #   - '@mapbox/node-pre-gyp'
-  #   - 'bcrypt'
-  # exclude:
-  #   - 'aws-sdk'
-  # nativeZip: true
-  # keepOutputDirectory: true
+  esbuild:
+    bundle: true
+    minify: false
+    keepOutputDirectory: false
+    external:
+      - 'mock-aws-s3'
+      - 'pg-hstore'
+      - 'pg'
+      - 'sequelize-cli'
+      - 'nock'
+      - 'sharp'
+      - '@mapbox/node-pre-gyp'
+      - 'bcrypt'
+    exclude:
+      - 'aws-sdk'
+  
+  serverless-offline:
+    httpPort: 3000
+    lambdaPort: 3002
+    websocketPort: 3001
+    noPrependStageInUrl: true
+    noAuth: true
 
 provider:
   name: aws
@@ -95,9 +101,9 @@ provider:
     # STREAM_FUNCTION_URL: !ImportValue ${self:custom.stage}-StreamFunctionUrl
 
 plugins:
-  # - serverless-offline
+  - serverless-offline
   - serverless-deployment-bucket
-  # - serverless-esbuild # enables esbuild plugin (https://dev.to/slootjes/optimizing-typescript-packages-in-serverless-framework-with-esbuild-1ol4)
+  - serverless-esbuild # enables esbuild plugin (https://dev.to/slootjes/optimizing-typescript-packages-in-serverless-framework-with-esbuild-1ol4)
 
 package:
   # individually: true # an optimized package per function

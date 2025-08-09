@@ -137,6 +137,9 @@ build/
 .aws/
 .serverless/
 
+# Serverless esbuild
+.esbuild/
+
 # Database
 *.sqlite
 *.sqlite3
