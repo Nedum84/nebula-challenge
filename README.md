@@ -40,6 +40,7 @@ A complete AWS Lambda-compatible Node.js application built for the Nebula Logix 
 
 - **Express Server**: http://localhost:5500
 - **Serverless Offline**: http://localhost:3000
+- **React Frontend**: http://localhost:4000
 - **AWS Lambda**: (deployed endpoint URL)
 
 ## 🔐 Authentication
@@ -788,6 +789,10 @@ The project includes a complete React TypeScript frontend application that provi
 ### Frontend Structure
 ```
 client/
+├── public/                 # Static assets
+│   ├── index.html
+│   ├── favicon.ico
+│   └── manifest.json
 ├── src/
 │   ├── components/          # Reusable UI components
 │   │   ├── Layout.tsx
@@ -807,8 +812,14 @@ client/
 │   │   ├── auth.service.ts
 │   │   ├── leaderboard.service.ts
 │   │   └── websocket.service.ts
-│   └── types/              # TypeScript definitions
-└── public/                 # Static assets
+│   ├── types/              # TypeScript definitions
+│   │   ├── auth.types.ts
+│   │   └── leaderboard.types.ts
+│   ├── App.tsx             # Main App component
+│   └── index.tsx           # React entry point
+├── package.json
+├── tsconfig.json
+└── tailwind.config.js
 ```
 
 ### Quick Start (Frontend)
@@ -824,7 +835,7 @@ npm install
 npm start
 ```
 
-The frontend will start on http://localhost:3000 and automatically connect to the backend API.
+The frontend will start on http://localhost:4000 and automatically connect to the backend API.
 
 ### Frontend Technologies
 
