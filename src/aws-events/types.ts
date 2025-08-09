@@ -1,5 +1,4 @@
 export enum AwsEventType {
-  // Customer engagements after 10 mins, 1day, etc
   USER_CREATED = "user_created",
   USER_VERIFY_EMAIL = "user_verify_email",
   USER_REG_T10MINS = "user_reg_t_10mins",
@@ -15,7 +14,6 @@ export enum AwsEventType {
 export type AwsEventBody<T = Record<string, string | number | Date | any>> = {
   type: AwsEventType;
   payload: {
-    /** e.g product_id, store_id or user_id */
     id: string;
   } & T;
 };

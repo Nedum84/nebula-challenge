@@ -1,14 +1,9 @@
-// Type definition for Lambda streaming response
-// type LambdaResponseStream = NodeJS.WritableStream & {
 export type LambdaResponseStream = {
-  // Stream write control methods
   cork: () => void;
   uncork: () => void;
   write: (chunk: string | Buffer) => boolean;
   end: (chunk?: string | Buffer) => void;
   destroy: (error?: Error) => void;
-
-  // Stream event methods
   addListener: (event: string, listener: (...args: any[]) => void) => LambdaResponseStream;
   emit: (event: string, ...args: any[]) => boolean;
   eventNames: () => (string | symbol)[];
@@ -25,6 +20,5 @@ export type LambdaResponseStream = {
   removeListener: (event: string, listener: (...args: any[]) => void) => LambdaResponseStream;
   setMaxListeners: (n: number) => LambdaResponseStream;
 
-  // Lambda specific methods
   setContentType: (contentType: string) => void;
 };

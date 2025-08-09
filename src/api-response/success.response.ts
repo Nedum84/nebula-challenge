@@ -17,7 +17,6 @@ export class SuccessResponse {
     Object.keys(headers).forEach((key) => {
       res.header(key, headers[key]);
     });
-    // pass headers
     res.status(statusCode).send({
       status: statusCode,
       success,

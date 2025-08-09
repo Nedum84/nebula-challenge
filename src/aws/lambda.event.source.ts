@@ -1,4 +1,3 @@
-// https://gist.github.com/jeshan/52cb021fd20d871c56ad5ce6d2654d7b
 export function getLambdaEventSource(event: any) {
   if (event.Records && event.Records[0].cf) return "isCloudfront";
 
@@ -11,11 +10,6 @@ export function getLambdaEventSource(event: any) {
   if (event.routeKey && event.requestContext?.domainName.includes("lambda-url"))
     return "isFuntionUrl";
 
-  // if (event.authorizationToken === "incoming-client-token") return "isApiGatewayAuthorizer";
-
-  // if (event.pathParameters && event.pathParameters.proxy) return "isApiGatewayAwsProxy";
-
-  // if (event.requestContext && event.requestContext.resourceId) return "isApiGatewayHttp";
 
   if (event.requestContext || event.authorizationToken || event.pathParameters)
     return "isApiGateway";
@@ -26,10 +20,6 @@ export function getLambdaEventSource(event: any) {
 
   if (event.source === "aws.events") return "isScheduledEvent";
 
-  /** event_name & payload was the input params @AwsEventBody in ./aws-events/types.ts. When event scheduler is fed with JSON input,
-   * the lambda fn when triggered will have exactly that JSON input as the event. i.e @param input(event schedular target input) = @param event (Lambda invocation event)
-   * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/scheduler/command/CreateScheduleCommand/
-   */
   if (event.source === "aws.scheduler" || (event.event_name && event.payload))
     return "isEventScheduler";
 

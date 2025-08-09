@@ -18,11 +18,9 @@ export const authMiddleware = async (req: Request, _res: Response, next: NextFun
       throw new UnauthorizedError("Bearer token is required");
     }
 
-    // Verify Cognito access token and get user details
     const user = await authService.verifyAccessToken(accessToken);
 
     
-    // Set the user context and continue
     CognitoUserContext.with(user, () => {
       next();
     });
@@ -31,7 +29,6 @@ export const authMiddleware = async (req: Request, _res: Response, next: NextFun
   }
 };
 
-// Optional middleware for routes that can work with or without authentication
 export const optionalAuthMiddleware = async (req: Request, _res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers["authorization"];
@@ -47,16 +44,13 @@ export const optionalAuthMiddleware = async (req: Request, _res: Response, next:
     }
 
     try {
-      // Try to verify token, but don't fail if it's invalid
       const user = await authService.verifyAccessToken(accessToken);
 
       
-      // Set the user context and continue
-      CognitoUserContext.with(user, () => {
+        CognitoUserContext.with(user, () => {
         next();
       });
     } catch (error) {
-      // Ignore token verification errors for optional auth
       console.log("Optional auth failed:", error);
       next();
     }
@@ -65,7 +59,6 @@ export const optionalAuthMiddleware = async (req: Request, _res: Response, next:
   }
 };
 
-// Create the UserContext using AsyncLocalStorage
 export const CognitoUserContext = (() => {
   const storage = new AsyncLocalStorage<CognitoUser | null>();
 

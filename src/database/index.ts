@@ -1,7 +1,6 @@
 export { DbManager, TABLES, docClient, rawClient, cognitoClient } from "./db.init";
 export { SeedData, type LeaderboardEntry } from "./seeds";
 
-// Re-export commonly used types
 export type {
   DynamoDBClient,
   CreateTableCommand,

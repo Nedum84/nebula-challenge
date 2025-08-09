@@ -7,7 +7,6 @@ export class NotFoundError extends CustomError {
   constructor(public message: string = "Not found", public errorCode = "NOT_FOUND_ERROR") {
     super(message);
 
-    // Only because we are extending a built in class
     Object.setPrototypeOf(this, NotFoundError.prototype);
   }
 }

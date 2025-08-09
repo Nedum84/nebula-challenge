@@ -7,7 +7,6 @@ const options: ValidationOptions = {
   allowUnknown: false, // ignore unknown props
   stripUnknown: false, // remove unknown props
   errors: {
-    //error formatting settings.
     label: "key", //defines the value used to set the label context variable.
   },
 };
@@ -23,12 +22,6 @@ const validateReq = (schema: any) => (req: Request, res: Response, next: NextFun
   Object.assign(req, value);
   return next();
 };
-/**
- * Create an object composed of the picked object properties
- * @param {Object} object
- * @param {string[]} keys
- * @returns {Object}
- */
 interface MapKey {
   [key: string]: string | undefined;
 }

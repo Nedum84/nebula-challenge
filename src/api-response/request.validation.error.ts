@@ -12,7 +12,7 @@ export class RequestValidationError extends CustomError {
     super(error.message ?? "Invalid request parameters");
     if (this.error instanceof ValidationError) {
       this.errors = this.error.details?.map((err) => {
-        return { message: err.message, field: err.context?.key }; // 'key' or 'label' gives the {{ field }}
+        return { message: err.message, field: err.context?.key };
       });
     } else {
       this.errors = (this.error as CustomValidationError).errors;

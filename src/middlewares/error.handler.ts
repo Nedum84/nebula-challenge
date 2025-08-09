@@ -3,9 +3,6 @@ import httpStatus from "http-status";
 import { CustomError } from "../api-response";
 import { isObject, isString } from "lodash";
 
-/**
- * Handles all the throwable errors and returns the standard response
- */
 export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   const status = httpStatus.BAD_REQUEST;
 
@@ -23,7 +20,6 @@ export const errorHandler = (err: Error, req: Request, res: Response, next: Next
   })();
 
   const lambdaResponseStream = (req as any).responseStream;
-  // For Lambda Streaming
   if (lambdaResponseStream) {
     lambdaResponseStream.setContentType("text/event-stream");
 

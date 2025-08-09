@@ -6,7 +6,6 @@ export const lamdaCliHandler = async function (
   context: Context,
   callback: any
 ) {
-  // context.callbackWaitsForEmptyEventLoop = false;
 
   await cli(event, context, (error: any, stdout: any, stderr: any) => {
     if (error) {

@@ -1,7 +1,7 @@
 export abstract class CustomError extends Error {
   abstract statusCode: number;
   abstract errorCode: string;
-  public errors?: any[]; //for request validation error {Joi validation}
+  public errors?: any[];
 
   constructor(message: string) {
     super(message);

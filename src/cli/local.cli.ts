@@ -18,18 +18,15 @@ const handle = async (commands: any[] = []) => {
   }
 };
 
-// DB migrate, drop, create
 const args = process.argv.slice(2);
 
-// Check if first argument is 's:cli' and get the rest of the commands
 if (args[0] === "s:cli") {
-  const commands = args.slice(1); // Remove 's:cli' from the commands
+  const commands = args.slice(1);
   handle(commands)
     .then(() => {
       process.exit(0);
     })
     .catch((error) => {
-      // console.log(error);
       process.exit(1);
     });
 } else {

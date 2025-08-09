@@ -1,6 +1,6 @@
 import express, { Request, NextFunction, Response } from "express";
 import { json } from "body-parser";
-import "express-async-errors"; //To enable async on route function
+import "express-async-errors";
 import config from "./config/config";
 import path from "path";
 import helmet from "helmet";

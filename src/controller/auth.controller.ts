@@ -33,7 +33,6 @@ const login = async (req: Request, res: Response) => {
 };
 
 const getProfile = async (req: Request, res: Response) => {
-  // Get user from context
   const user = CognitoUserContext.use();
 
   if (!user) {
