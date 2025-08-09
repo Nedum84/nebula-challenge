@@ -4,23 +4,13 @@ import {
   DeleteTableCommand,
   DescribeTableCommand,
   ListTablesCommand,
-  PutItemCommand,
-  ScanCommand,
-  QueryCommand,
 } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
-  PutCommand,
   ScanCommand as DocScanCommand,
-  QueryCommand as DocQueryCommand,
-  DeleteCommand,
   BatchWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
-import {
-  CognitoIdentityProviderClient,
-  ListUsersCommand,
-  AdminDeleteUserCommand,
-} from "@aws-sdk/client-cognito-identity-provider";
+import { CognitoIdentityProviderClient } from "@aws-sdk/client-cognito-identity-provider";
 import config from "../config/config";
 
 // DynamoDB Client Configuration
@@ -136,7 +126,7 @@ export class DbManager {
 
       await rawClient.send(new CreateTableCommand(tableSchema));
       console.log(`Table ${tableSchema.TableName} created successfully`);
-      
+
       // Wait for table to be active
       await this.waitForTable(tableSchema.TableName, "ACTIVE");
       return true;
@@ -196,8 +186,10 @@ export class DbManager {
           return;
         }
 
-        console.log(`Waiting for table ${tableName} to become ${desiredState}. Current state: ${currentState}`);
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+        console.log(
+          `Waiting for table ${tableName} to become ${desiredState}. Current state: ${currentState}`
+        );
+        await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 seconds
         attempts++;
       } catch (error: any) {
         if (error.name === "ResourceNotFoundException" && desiredState === "DELETED") {
@@ -249,17 +241,19 @@ export class DbManager {
       const batchSize = 25;
       for (let i = 0; i < items.length; i += batchSize) {
         const batch = items.slice(i, i + batchSize);
-        const deleteRequests = batch.map(item => ({
+        const deleteRequests = batch.map((item) => ({
           DeleteRequest: {
             Key: { id: item.id }, // Assuming 'id' is the primary key
           },
         }));
 
-        await docClient.send(new BatchWriteCommand({
-          RequestItems: {
-            [tableName]: deleteRequests,
-          },
-        }));
+        await docClient.send(
+          new BatchWriteCommand({
+            RequestItems: {
+              [tableName]: deleteRequests,
+            },
+          })
+        );
       }
 
       console.log(`Cleared ${items.length} items from table ${tableName}`);
@@ -276,13 +270,11 @@ export class DbManager {
   static async initializeTables(): Promise<boolean> {
     try {
       console.log("Initializing DynamoDB tables...");
-      
-      const results = await Promise.all([
-        this.createTable(TABLES.LEADERBOARD.schema),
-      ]);
 
-      const allSuccess = results.every(result => result === true);
-      
+      const results = await Promise.all([this.createTable(TABLES.LEADERBOARD.schema)]);
+
+      const allSuccess = results.every((result) => result === true);
+
       if (allSuccess) {
         console.log("All tables initialized successfully");
       } else {
@@ -302,13 +294,11 @@ export class DbManager {
   static async dropAllTables(): Promise<boolean> {
     try {
       console.log("Dropping all DynamoDB tables...");
-      
-      const results = await Promise.all([
-        this.deleteTable(TABLES.LEADERBOARD.name),
-      ]);
 
-      const allSuccess = results.every(result => result === true);
-      
+      const results = await Promise.all([this.deleteTable(TABLES.LEADERBOARD.name)]);
+
+      const allSuccess = results.every((result) => result === true);
+
       if (allSuccess) {
         console.log("All tables dropped successfully");
       } else {
@@ -328,13 +318,13 @@ export class DbManager {
   static async resetDatabase(): Promise<boolean> {
     try {
       console.log("Resetting database...");
-      
+
       await this.dropAllTables();
       // Wait a moment for tables to be fully deleted
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
       const success = await this.initializeTables();
-      
+
       if (success) {
         console.log("Database reset successfully");
       } else {

@@ -1,4 +1,4 @@
-import request, { Response } from "supertest";
+import request, { Response, Test } from "supertest";
 import { app } from "../../src/app";
 
 interface RequestParams<T> {
@@ -29,7 +29,7 @@ export const customRequest = async <T = object>(
   }
 
   // Create the appropriate request based on method
-  let appRequest;
+  let appRequest: Test;
   switch (method) {
     case "post":
       appRequest = request(app).post(requestUrl).send(payload);

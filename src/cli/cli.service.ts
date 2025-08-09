@@ -1,7 +1,9 @@
 import config from "../config/config";
 import { DbManager, SeedData, cognitoClient } from "../database";
-import { authService } from "../service/auth.service";
-import { ListUsersCommand, AdminDeleteUserCommand } from "@aws-sdk/client-cognito-identity-provider";
+import {
+  ListUsersCommand,
+  AdminDeleteUserCommand,
+} from "@aws-sdk/client-cognito-identity-provider";
 
 // ============= DynamoDB Operations =============
 
@@ -9,7 +11,7 @@ const dbInit = async () => {
   try {
     console.log("🚀 Initializing DynamoDB tables...");
     const success = await DbManager.initializeTables();
-    const message = success 
+    const message = success
       ? "✅ Database initialized successfully"
       : "❌ Database initialization failed";
     console.log(message);
@@ -24,7 +26,7 @@ const dbDrop = async () => {
   try {
     console.log("🗑️  Dropping all DynamoDB tables...");
     const success = await DbManager.dropAllTables();
-    const message = success 
+    const message = success
       ? "✅ All tables dropped successfully"
       : "❌ Failed to drop some tables";
     console.log(message);
@@ -39,9 +41,7 @@ const dbReset = async () => {
   try {
     console.log("🔄 Resetting database (drop + recreate)...");
     const success = await DbManager.resetDatabase();
-    const message = success 
-      ? "✅ Database reset successfully"
-      : "❌ Database reset failed";
+    const message = success ? "✅ Database reset successfully" : "❌ Database reset failed";
     console.log(message);
     return message;
   } catch (error: any) {
@@ -60,7 +60,7 @@ const dbStatus = async () => {
         return `  ${tableName}: ${exists ? "✅ EXISTS" : "❌ MISSING"}`;
       })
     );
-    
+
     const message = `Database Status:\n${tableStatuses.join("\n")}\nTotal tables: ${tables.length}`;
     console.log(message);
     return message;
@@ -74,12 +74,10 @@ const dbClear = async () => {
   try {
     console.log("🧹 Clearing all data from tables...");
     const tables = await DbManager.listTables();
-    const results = await Promise.all(
-      tables.map(tableName => DbManager.clearTable(tableName))
-    );
-    
-    const success = results.every(result => result === true);
-    const message = success 
+    const results = await Promise.all(tables.map((tableName) => DbManager.clearTable(tableName)));
+
+    const success = results.every((result) => result === true);
+    const message = success
       ? "✅ All tables cleared successfully"
       : "❌ Failed to clear some tables";
     console.log(message);
@@ -96,7 +94,7 @@ const dbSeedAll = async () => {
   try {
     console.log("🌱 Seeding all sample data...");
     const success = await SeedData.seedAll();
-    const message = success 
+    const message = success
       ? "✅ All seed data inserted successfully"
       : "❌ Some seed operations failed";
     console.log(message);
@@ -112,7 +110,7 @@ const dbSeedLeaderboard = async (args?: { count?: number }) => {
     const count = args?.count || 25;
     console.log(`🏆 Seeding ${count} leaderboard entries...`);
     const success = await SeedData.seedLeaderboard(count);
-    const message = success 
+    const message = success
       ? `✅ ${count} leaderboard entries seeded successfully`
       : "❌ Leaderboard seeding failed";
     console.log(message);
@@ -128,7 +126,7 @@ const dbSeedHighScores = async (args?: { count?: number }) => {
     const count = args?.count || 8;
     console.log(`🎯 Seeding ${count} high-score entries...`);
     const success = await SeedData.seedHighScores(count);
-    const message = success 
+    const message = success
       ? `✅ ${count} high-score entries seeded successfully`
       : "❌ High-score seeding failed";
     console.log(message);
@@ -144,7 +142,7 @@ const dbSeedUser = async (args: { userId: string; userName: string; count?: numb
     const count = args.count || 5;
     console.log(`👤 Seeding ${count} scores for user ${args.userName}...`);
     const success = await SeedData.seedUserScores(args.userId, args.userName, count);
-    const message = success 
+    const message = success
       ? `✅ ${count} scores seeded for user ${args.userName}`
       : `❌ User score seeding failed for ${args.userName}`;
     console.log(message);
@@ -160,21 +158,23 @@ const dbSeedUser = async (args: { userId: string; userName: string; count?: numb
 const cognitoListUsers = async () => {
   try {
     console.log("👥 Listing Cognito users...");
-    const response = await cognitoClient.send(new ListUsersCommand({
-      UserPoolId: config.COGNITO_USER_POOL_ID,
-      Limit: 50,
-    }));
+    const response = await cognitoClient.send(
+      new ListUsersCommand({
+        UserPoolId: config.COGNITO_USER_POOL_ID,
+        Limit: 50,
+      })
+    );
 
     const users = response.Users || [];
-    const userList = users.map(user => ({
+    const userList = users.map((user) => ({
       username: user.Username,
-      email: user.Attributes?.find(attr => attr.Name === "email")?.Value,
+      email: user.Attributes?.find((attr) => attr.Name === "email")?.Value,
       status: user.UserStatus,
       created: user.UserCreateDate,
     }));
 
     console.log(`Found ${users.length} users:`);
-    userList.forEach(user => {
+    userList.forEach((user) => {
       console.log(`  - ${user.username} (${user.email}) - ${user.status}`);
     });
 
@@ -188,13 +188,15 @@ const cognitoListUsers = async () => {
 const cognitoClearUsers = async () => {
   try {
     console.log("🗑️  Clearing all Cognito users...");
-    
-    const listResponse = await cognitoClient.send(new ListUsersCommand({
-      UserPoolId: config.COGNITO_USER_POOL_ID,
-    }));
+
+    const listResponse = await cognitoClient.send(
+      new ListUsersCommand({
+        UserPoolId: config.COGNITO_USER_POOL_ID,
+      })
+    );
 
     const users = listResponse.Users || [];
-    
+
     if (users.length === 0) {
       console.log("No users found to delete");
       return "No users found to delete";
@@ -203,10 +205,12 @@ const cognitoClearUsers = async () => {
     let deletedCount = 0;
     for (const user of users) {
       try {
-        await cognitoClient.send(new AdminDeleteUserCommand({
-          UserPoolId: config.COGNITO_USER_POOL_ID,
-          Username: user.Username!,
-        }));
+        await cognitoClient.send(
+          new AdminDeleteUserCommand({
+            UserPoolId: config.COGNITO_USER_POOL_ID,
+            Username: user.Username!,
+          })
+        );
         console.log(`  ✅ Deleted user: ${user.Username}`);
         deletedCount++;
       } catch (deleteError: any) {
@@ -226,11 +230,13 @@ const cognitoClearUsers = async () => {
 const cognitoDeleteUser = async (args: { username: string }) => {
   try {
     console.log(`🗑️  Deleting Cognito user: ${args.username}...`);
-    
-    await cognitoClient.send(new AdminDeleteUserCommand({
-      UserPoolId: config.COGNITO_USER_POOL_ID,
-      Username: args.username,
-    }));
+
+    await cognitoClient.send(
+      new AdminDeleteUserCommand({
+        UserPoolId: config.COGNITO_USER_POOL_ID,
+        Username: args.username,
+      })
+    );
 
     const message = `✅ User ${args.username} deleted successfully`;
     console.log(message);
@@ -246,18 +252,20 @@ const cognitoDeleteUser = async (args: { username: string }) => {
 const systemStatus = async () => {
   try {
     console.log("🔍 Checking system status...");
-    
+
     // Check DynamoDB
     const tables = await DbManager.listTables();
     const dbStatus = tables.length > 0 ? "✅ Connected" : "❌ No tables found";
-    
+
     // Check Cognito
     let cognitoStatus = "❌ Connection failed";
     try {
-      const cognitoResponse = await cognitoClient.send(new ListUsersCommand({
-        UserPoolId: config.COGNITO_USER_POOL_ID,
-        Limit: 1,
-      }));
+      const cognitoResponse = await cognitoClient.send(
+        new ListUsersCommand({
+          UserPoolId: config.COGNITO_USER_POOL_ID,
+          Limit: 1,
+        })
+      );
       cognitoStatus = "✅ Connected";
     } catch (cognitoError) {
       // Keep default error status
@@ -328,10 +336,10 @@ const handler = async function (event: any, context?: any, callback?: any) {
   const env = config.NODE_ENV;
   console.log("🎮 Nebula Assessment CLI");
   console.log("Arguments:", event);
-  
+
   const command = typeof event === "string" ? event : event.fn || event.command;
   const args = typeof event === "object" ? event : {};
-  
+
   console.log(`⚡ Running "${command}" in ${env} mode`);
 
   let handle: Function | undefined;
@@ -346,7 +354,7 @@ const handler = async function (event: any, context?: any, callback?: any) {
 
   try {
     let result = "";
-    
+
     if (handle) {
       result = await handle(args, callback, context);
     } else {
@@ -359,16 +367,16 @@ const handler = async function (event: any, context?: any, callback?: any) {
     if (callback) {
       callback(null, result);
     }
-    
+
     return result;
   } catch (error: any) {
     const errorMsg = `❌ Command failed: ${error.message}`;
     console.error(errorMsg);
-    
+
     if (callback) {
       callback(error);
     }
-    
+
     throw error;
   }
 };
