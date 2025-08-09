@@ -42,21 +42,6 @@ const envVarsSchema = Joi.object()
     SQS_QUEUE_URL: Joi.string(),
     SQS_QUEUE_ARN: Joi.string(),
 
-    // App Configuration (used in utils)
-    PAYMENT_CHANNEL_WEB: Joi.string().valid("flw", "paystack", "squad").default("paystack"),
-    PAYMENT_CHANNEL_MOBILE: Joi.string().valid("flw", "paystack", "squad").default("paystack"),
-
-    ANDROID_APP_VERSION_CODE: Joi.number().default(2),
-    ANDROID_APP_VERSION_NAME: Joi.string().default("1.0.2"),
-    ANDROID_APP_VERSION_CHANGES: Joi.string().default("Bug fixes & others"),
-    ANDROID_MIN_APP_VERSION_CODE: Joi.number().default(1),
-
-    IOS_APP_VERSION_CODE: Joi.number().default(2),
-    IOS_APP_VERSION_NAME: Joi.string().default("1.0.2"),
-    IOS_APP_VERSION_CHANGES: Joi.string().default("Bug fixes & others"),
-    IOS_MIN_APP_VERSION_CODE: Joi.number().default(1),
-
-    USE_AI_CHAT_STREAMING: Joi.bool().default(true),
   })
   .unknown();
 
@@ -109,25 +94,4 @@ export default Object.freeze({
   SQS_QUEUE_URL: envVars.SQS_QUEUE_URL,
   SQS_QUEUE_ARN: envVars.SQS_QUEUE_ARN,
 
-  // App Configuration
-  paymentChannels: {
-    web: envVars.PAYMENT_CHANNEL_WEB,
-    mobile: envVars.PAYMENT_CHANNEL_MOBILE,
-  },
-  appUpdates: {
-    android: {
-      versionCode: envVars.ANDROID_APP_VERSION_CODE,
-      versionName: envVars.ANDROID_APP_VERSION_NAME,
-      versionChanges: envVars.ANDROID_APP_VERSION_CHANGES,
-      minVersionCode: envVars.ANDROID_MIN_APP_VERSION_CODE,
-    },
-    ios: {
-      versionCode: envVars.IOS_APP_VERSION_CODE,
-      versionName: envVars.IOS_APP_VERSION_NAME,
-      versionChanges: envVars.IOS_APP_VERSION_CHANGES,
-      minVersionCode: envVars.IOS_MIN_APP_VERSION_CODE,
-    },
-  },
-
-  USE_AI_CHAT_STREAMING: envVars.USE_AI_CHAT_STREAMING,
 });
