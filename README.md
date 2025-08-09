@@ -59,6 +59,7 @@ Authorization: Bearer <cognito_access_token>
 
 - Node.js (v16 or higher)
 - npm
+- Docker and Docker Compose
 
 ### Installation
 
@@ -66,38 +67,58 @@ Authorization: Bearer <cognito_access_token>
 
    ```bash
    npm install
+   cd client && npm install && cd ..
    ```
 
-2. **Build the project:**
+2. **Start Docker services:**
+
+   ```bash
+   npm run dc:up
+   ```
+   This starts local DynamoDB on port 8000 and DynamoDB Admin on port 8001.
+
+3. **Initialize database:**
+
+   ```bash
+   npm run cli s:cli db:init
+   ```
+
+4. **Build the project:**
 
    ```bash
    npm run build
    ```
 
-3. **Start the server:**
+5. **Start all servers:**
    ```bash
-   npm start
+   npm run start:all
    ```
 
-The server will start on http://localhost:5500
+This will concurrently start:
+- 🟢 **Express Server**: http://localhost:5500
+- 🔵 **Serverless Offline**: http://localhost:3000  
+- 🟣 **React Frontend**: http://localhost:4000
+- 🔧 **DynamoDB Admin**: http://localhost:8001
+
+### 🔐 Test User Credentials
+
+The application automatically creates test users on startup for easy testing:
+
+**Primary Test User:**
+- Email: `test@example.com`
+- Password: `TestPass123!`
+
+**Admin Test User:**
+- Email: `admin@nebula.com`  
+- Password: `AdminPass123!`
+
+Use these credentials to log in immediately without going through the registration process.
 
 ### Development Mode
 
-**Option 1: Start All Services (Recommended)**
-Start all three servers with a single command:
+**Alternative: Individual Services**
 
-```bash
-npm run start:all
-```
-
-This will concurrently start:
-- 🟢 Express Server (http://localhost:5500)
-- 🔵 Serverless Offline (http://localhost:3000)  
-- 🟣 React Frontend (http://localhost:4000)
-
-**Option 2: Individual Services**
-
-Express Server (Local):
+If you prefer to run services separately:
 ```bash
 npm run dev
 ```
