@@ -3,7 +3,7 @@ useDotenv: false # Load environment variables from .env files (default: false)
 configValidationMode: off # error | warn(default) | off
 
 custom:
-  awsId: '893130088846'
+  awsId: "893130088846"
   stage: ${opt:stage, 'dev'}
   awsRegion: ${opt:region, 'eu-north-1'}
   bucketName: storage-${self:service}-${self:custom.stage}-${self:custom.awsId}
@@ -14,17 +14,17 @@ custom:
     minify: false
     keepOutputDirectory: false
     external:
-      - 'mock-aws-s3'
-      - 'pg-hstore'
-      - 'pg'
-      - 'sequelize-cli'
-      - 'nock'
-      - 'sharp'
-      - '@mapbox/node-pre-gyp'
-      - 'bcrypt'
+      - "mock-aws-s3"
+      - "pg-hstore"
+      - "pg"
+      - "sequelize-cli"
+      - "nock"
+      - "sharp"
+      - "@mapbox/node-pre-gyp"
+      - "bcrypt"
     exclude:
-      - 'aws-sdk'
-  
+      - "aws-sdk"
+
   serverless-offline:
     httpPort: 3000
     lambdaPort: 3002
@@ -178,15 +178,6 @@ functions:
           topicName: ${self:custom.stage}-nebulaSnsTopicName # `!ImportValue ${self:custom.stage}-nebulaSnsTopicName` not working(don't know why)
       - sqs:
           arn: !GetAtt NebulaSqsQueue.Arn #!ImportValue ${self:custom.stage}-nebulaSqsQueueArn
-      - schedule:
-          rate: rate(2 hours)
-          input:
-            fn: cmd:reset_client_cache
-      - schedule:
-          # rate: rate(1 hour)
-          rate: cron(0 0-23 * * ? *)
-          input:
-            fn: cmd:study_reminder_notification
 
 resources:
   Resources:
@@ -241,4 +232,3 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         KmsMasterKeyId: alias/aws/sqs
-
