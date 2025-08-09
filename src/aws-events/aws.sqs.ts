@@ -110,7 +110,7 @@ const read = async (params: {
       messageAttributes: {},
       md5OfBody: '41288237d65b5b9b9564b691bf8c0cc6',
       eventSource: 'aws:sqs',
-      eventSourceARN: 'arn:aws:sqs:eu-west-2:899172222060:iclass-dev-IclassSqsQueue-cjMHd913Px2D',
+      eventSourceARN: 'arn:aws:sqs:eu-west-2:899172222060:nebula-dev-NebulaSqsQueue-cjMHd913Px2D',
       awsRegion: 'eu-west-2'
     }
   ]

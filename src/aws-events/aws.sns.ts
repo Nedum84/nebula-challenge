@@ -80,18 +80,18 @@ const sendSms = async (params: {
     {
       EventSource: 'aws:sns',
       EventVersion: '1.0',
-      EventSubscriptionArn: 'arn:aws:sns:eu-west-2:899172222060:dev-iclassSnsTopic:f0a1ec49-8905-4926-948d-b97d6ab63297',
+      EventSubscriptionArn: 'arn:aws:sns:eu-west-2:899172222060:dev-nebulaSnsTopic:f0a1ec49-8905-4926-948d-b97d6ab63297',
       Sns: {
         Type: 'Notification',
         MessageId: '2468f04e-191f-5e66-b399-ad1269b6b6c7',
-        TopicArn: 'arn:aws:sns:eu-west-2:899172222060:dev-iclassSnsTopic',
+        TopicArn: 'arn:aws:sns:eu-west-2:899172222060:dev-nebulaSnsTopic',
         Subject: null,
         Message: '{"event_name":"customer_reg_t_10mins--16f25b82-5f71-4ac9-b669-860e99d3b6633","type":"customer_reg_t_10mins","payload":{"id":"16f25b82-5f71-4ac9-b669-860e99d3b6633","phoneNumber":"0908723657483287467182736472874","message":"Hello Mahn! How are you doing???"}}',
         Timestamp: '2023-08-20T19:50:01.811Z',
         SignatureVersion: '1',
         Signature: 'gsKeck9mFlPUbthdrGuHBarX7RXM/r46KMuKgl3ULmPYryALn8eR8Cs2msXyEnnq7MjCAj81gLrgAr+sUbAMhd05QADxs8W8BggflSwfqsPT4ulOnvA2oMYpk5dkkz/qq2vA3faIBN748QbUMFKkL7CyOsvQWFqFgLQReImoCmUUULE6oBMQs/h3zHRlVmv5qFnRQ1TXtKnmBH4gTu/Aw++b8yE/z7faa5vlb36feXHAso7XuxoEzxlHNCxudYa2ZjCSK6oFIKtvNe7UVTtKDbMy3HXYLowQXngb1aAH3wIJ7ewWo6UKG6XYdsbABGCaDq16V2rnVD0KZ8zpHnUb1A==',
         SigningCertUrl: 'https://sns.eu-west-2.amazonaws.com/SimpleNotificationService-01d088a6f77103d0fe307c0069e40ed6.pem',
-        UnsubscribeUrl: 'https://sns.eu-west-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:eu-west-2:899172222060:dev-iclassSnsTopic:f0a1ec49-8905-4926-948d-b97d6ab63297',
+        UnsubscribeUrl: 'https://sns.eu-west-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:eu-west-2:899172222060:dev-nebulaSnsTopic:f0a1ec49-8905-4926-948d-b97d6ab63297',
         MessageAttributes: {}
       }
     }
