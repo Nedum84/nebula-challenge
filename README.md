@@ -768,3 +768,266 @@ This implementation fully satisfies all challenge requirements:
 8. ✅ **Mock AWS credentials** integrated as specified
 
 The application is production-ready and follows AWS best practices for serverless applications.
+
+---
+
+## 🎨 Frontend Application
+
+The project includes a complete React TypeScript frontend application that provides a user interface for the challenge API.
+
+### Frontend Features
+
+✅ **React TypeScript** - Modern React 19 with TypeScript
+✅ **Authentication UI** - Registration, login, email confirmation flows  
+✅ **Dashboard** - User dashboard with profile information
+✅ **Score Submission** - Interactive score submission interface
+✅ **Live Leaderboard** - Real-time leaderboard with WebSocket updates
+✅ **Responsive Design** - TailwindCSS for mobile-first design
+✅ **Toast Notifications** - User-friendly feedback with react-hot-toast
+
+### Frontend Structure
+```
+client/
+├── src/
+│   ├── components/          # Reusable UI components
+│   │   ├── Layout.tsx
+│   │   └── ProtectedRoute.tsx
+│   ├── contexts/           # React contexts
+│   │   ├── AuthContext.tsx
+│   │   └── WebSocketContext.tsx
+│   ├── pages/              # Page components
+│   │   ├── Register.tsx
+│   │   ├── Login.tsx
+│   │   ├── ConfirmEmail.tsx
+│   │   ├── Dashboard.tsx
+│   │   ├── SubmitScore.tsx
+│   │   ├── Leaderboard.tsx
+│   │   └── Profile.tsx
+│   ├── services/           # API services
+│   │   ├── auth.service.ts
+│   │   ├── leaderboard.service.ts
+│   │   └── websocket.service.ts
+│   └── types/              # TypeScript definitions
+└── public/                 # Static assets
+```
+
+### Quick Start (Frontend)
+
+```bash
+# Navigate to client directory
+cd client
+
+# Install dependencies
+npm install
+
+# Start development server
+npm start
+```
+
+The frontend will start on http://localhost:3000 and automatically connect to the backend API.
+
+### Frontend Technologies
+
+- **React 19** - Latest React with modern features
+- **TypeScript** - Full type safety
+- **React Router** - Client-side routing
+- **Axios** - HTTP client for API calls
+- **TailwindCSS** - Utility-first CSS framework
+- **React Hot Toast** - Beautiful toast notifications
+- **Lucide React** - Modern icon library
+
+---
+
+## 🔄 CI/CD Pipeline (GitLab CI)
+
+Complete GitLab CI/CD pipeline for automated testing, building, and deployment.
+
+### Pipeline Configuration
+
+Create `.gitlab-ci.yml` in the project root:
+
+```yaml
+stages:
+  - install
+  - test
+  - build
+  - deploy
+
+variables:
+  NODE_VERSION: "18"
+  AWS_DEFAULT_REGION: "eu-north-1"
+
+# Cache configuration
+cache:
+  paths:
+    - node_modules/
+    - client/node_modules/
+
+# Install dependencies
+install:
+  stage: install
+  image: node:$NODE_VERSION
+  script:
+    - npm ci
+    - cd client && npm ci
+  artifacts:
+    paths:
+      - node_modules/
+      - client/node_modules/
+    expire_in: 1 hour
+
+# Run backend tests
+test:backend:
+  stage: test
+  image: node:$NODE_VERSION
+  dependencies:
+    - install
+  script:
+    - npm run test
+  coverage: '/Lines\s*:\s*(\d+\.\d+)%/'
+
+# Run frontend tests
+test:frontend:
+  stage: test
+  image: node:$NODE_VERSION
+  dependencies:
+    - install
+  script:
+    - cd client && npm test -- --coverage --watchAll=false
+  coverage: '/Lines\s*:\s*(\d+\.\d+)%/'
+
+# Build backend
+build:backend:
+  stage: build
+  image: node:$NODE_VERSION
+  dependencies:
+    - install
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 hour
+
+# Build frontend
+build:frontend:
+  stage: build
+  image: node:$NODE_VERSION
+  dependencies:
+    - install
+  script:
+    - cd client && npm run build
+  artifacts:
+    paths:
+      - client/build/
+    expire_in: 1 hour
+
+# Deploy to development
+deploy:dev:
+  stage: deploy
+  image: node:$NODE_VERSION
+  dependencies:
+    - build:backend
+    - build:frontend
+  before_script:
+    - npm install -g serverless
+    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_DEV
+    - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_DEV
+  script:
+    - sls deploy --stage dev
+  environment:
+    name: development
+    url: $DEV_API_URL
+  only:
+    - develop
+    - merge_requests
+
+# Deploy to production
+deploy:prod:
+  stage: deploy
+  image: node:$NODE_VERSION
+  dependencies:
+    - build:backend
+    - build:frontend
+  before_script:
+    - npm install -g serverless
+    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PROD
+    - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PROD
+  script:
+    - sls deploy --stage prod
+    # Initialize production database
+    - sls invoke --function job -d "db:init" --stage prod
+  environment:
+    name: production
+    url: $PROD_API_URL
+  only:
+    - main
+    - master
+  when: manual
+
+# Database migrations
+migrate:prod:
+  stage: deploy
+  image: node:$NODE_VERSION
+  before_script:
+    - npm install -g serverless
+    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PROD
+    - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PROD
+  script:
+    - sls invoke --function job -d "db:migrate" --stage prod
+  environment:
+    name: production
+  only:
+    - main
+    - master
+  when: manual
+```
+
+### Required GitLab CI/CD Variables
+
+Configure these variables in GitLab Project Settings > CI/CD > Variables:
+
+```bash
+# Development Environment
+AWS_ACCESS_KEY_ID_DEV=your_dev_access_key
+AWS_SECRET_ACCESS_KEY_DEV=your_dev_secret_key
+DEV_API_URL=https://your-dev-api-url.com
+
+# Production Environment  
+AWS_ACCESS_KEY_ID_PROD=your_prod_access_key
+AWS_SECRET_ACCESS_KEY_PROD=your_prod_secret_key
+PROD_API_URL=https://your-prod-api-url.com
+
+# AWS Configuration
+AWS_REGION=eu-north-1
+COGNITO_USER_POOL_ID=eu-north-1_example
+COGNITO_CLIENT_ID=54p32d5n5j5m2t0gt45e9og8vo
+COGNITO_CLIENT_SECRET=your_cognito_secret
+
+# DynamoDB
+DYNAMODB_LEADERBOARD_TABLE=leaderboard
+DYNAMODB_LEADERBOARD_ARN=arn:aws:dynamodb:eu-north-1:893130088846:table/leaderboard
+
+# WebSocket
+WEBSOCKET_URL=wss://your-websocket-url.com/production/
+WEBSOCKET_CONNECTION_URL=https://your-websocket-url.com/production/@connections
+```
+
+### Pipeline Features
+
+✅ **Automated Testing** - Both backend and frontend tests
+✅ **Code Coverage** - Coverage reports for quality assurance  
+✅ **Multi-Stage Builds** - Separate build processes for backend/frontend
+✅ **Environment Management** - Separate dev/prod deployments
+✅ **Manual Production Deploy** - Controlled production releases
+✅ **Database Migrations** - Automated database setup and migrations
+✅ **Artifact Caching** - Faster builds with dependency caching
+
+### Deployment Workflow
+
+1. **Feature Branch** → Triggers tests only
+2. **Develop Branch** → Deploys to development environment
+3. **Main/Master Branch** → Manual deployment to production
+4. **Database Changes** → Manual migration trigger available
+
+This ensures a robust CI/CD pipeline with proper testing, building, and deployment automation.
