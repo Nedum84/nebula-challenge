@@ -207,6 +207,5 @@ export class CognitoMockService {
 // Initialize with a test user for convenience
 CognitoMockService.createTestUser();
 CognitoMockService.createTestUser("admin@nebula.com", "AdminPass123!");
-// TODO: Add db seed all here
 
 export default CognitoMockService;
