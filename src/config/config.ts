@@ -17,7 +17,7 @@ const envVarsSchema = Joi.object()
       .description("days after which refresh tokens expire"),
     
     // AWS Configuration
-    AWS_REGION: Joi.string().default("eu-west-2"),
+    AWS_REGION: Joi.string().default("eu-north-1"),
     AWS_ACCESS_KEY_ID: Joi.string().default("AKIA474VTUGHK62Y2HHT"),
     AWS_SECRET_ACCESS_KEY: Joi.string().default("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"),
     
