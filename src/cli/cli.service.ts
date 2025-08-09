@@ -4,6 +4,7 @@ import {
   ListUsersCommand,
   AdminDeleteUserCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
+import { mockCommands } from "./mock.utils";
 
 // ============= DynamoDB Operations =============
 
@@ -403,6 +404,8 @@ const registerDev: Record<string, Function> = {
   "cognito:list": cognitoListUsers,
   "cognito:clear": cognitoClearUsers,
   "cognito:delete": cognitoDeleteUser,
+  // Mock commands for local development
+  ...mockCommands,
 };
 
 export { register, registerDev, handler };

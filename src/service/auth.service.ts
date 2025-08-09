@@ -9,6 +9,8 @@ import { createHmac } from "crypto";
 import config from "../config/config";
 import { BadRequestError, UnauthorizedError } from "../api-response";
 import { cognitoClient } from "../database";
+import { isLocal } from "../utils/env.utils";
+import CognitoMockService from "./cognito.mock";
 
 // Generate secret hash for Cognito client
 const generateSecretHash = (username: string): string => {
@@ -46,6 +48,11 @@ export interface LoginData {
 
 const register = async (data: RegisterData): Promise<{ message: string; user_id?: string }> => {
   try {
+    // Use mock service for local development
+    if (isLocal()) {
+      return await CognitoMockService.register(data);
+    }
+
     const { email, preferred_username, name, password } = data;
 
     const secretHash = generateSecretHash(email);
@@ -97,6 +104,10 @@ const confirmSignUp = async (
   confirmationCode: string
 ): Promise<{ message: string }> => {
   try {
+    // Use mock service for local development
+    if (isLocal()) {
+      return await CognitoMockService.confirmSignUp(email, confirmationCode);
+    }
     const secretHash = generateSecretHash(email);
 
     const command = new ConfirmSignUpCommand({
@@ -126,6 +137,11 @@ const confirmSignUp = async (
 
 const login = async (data: LoginData): Promise<AuthResponse> => {
   try {
+    // Use mock service for local development
+    if (isLocal()) {
+      return await CognitoMockService.login(data);
+    }
+
     const { email, password } = data;
     const secretHash = generateSecretHash(email);
 
@@ -224,6 +240,11 @@ const getUserDetails = async (accessToken: string): Promise<CognitoUser> => {
 };
 
 const verifyAccessToken = async (accessToken: string): Promise<CognitoUser> => {
+  // Use mock service for local development
+  if (isLocal()) {
+    return await CognitoMockService.verifyAccessToken(accessToken);
+  }
+  
   return await getUserDetails(accessToken);
 };
 
