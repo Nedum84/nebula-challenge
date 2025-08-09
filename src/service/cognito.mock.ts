@@ -55,7 +55,7 @@ export class CognitoMockService {
     }
 
     const userId = randomUUID();
-    const confirmationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const confirmationCode = "123456"; // Fixed confirmation code for mock
 
     mockUsers.set(email, {
       userId,
@@ -71,7 +71,7 @@ export class CognitoMockService {
     console.log(`🔑 [MOCK COGNITO] Confirmation code: ${confirmationCode}`);
 
     return {
-      message: "Registration successful. Please check your email for verification code.",
+      message: `Registration successful. Please check your email for verification code. For testing, use confirmation code: 123456`,
       user_id: userId,
     };
   }

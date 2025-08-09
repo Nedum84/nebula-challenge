@@ -36,12 +36,11 @@ A complete AWS Lambda-compatible Node.js application built for the Nebula Logix 
 
 ---
 
-## 🚀 Base URL
+## 🚀 Base URLs
 
-```
-Local Development: http://localhost:5500
-AWS Lambda: (deployed endpoint)
-```
+- **Express Server**: http://localhost:5500
+- **Serverless Offline**: http://localhost:3000
+- **AWS Lambda**: (deployed endpoint URL)
 
 ## 🔐 Authentication
 
@@ -94,11 +93,7 @@ npm run dev
 Run locally with serverless-offline to simulate AWS Lambda environment:
 
 ```bash
-# Install serverless offline plugin
-npm install --save-dev serverless-offline
-
-# Start serverless offline
-npm run serverless:offline
+npm run sls:offline
 # or
 sls offline
 ```
@@ -519,59 +514,6 @@ WEBSOCKET_URL=wss://gdjtdhxwkf.execute-api.eu-north-1.amazonaws.com/production/
 WEBSOCKET_CONNECTION_URL=https://gdjtdhxwkf.execute-api.eu-north-1.amazonaws.com/production/@connections
 ```
 
-### DynamoDB Table Structure
-
-```json
-{
-  "TableName": "leaderboard",
-  "KeySchema": [
-    {
-      "AttributeName": "id",
-      "KeyType": "HASH"
-    }
-  ],
-  "AttributeDefinitions": [
-    {
-      "AttributeName": "id",
-      "AttributeType": "S"
-    }
-  ],
-  "BillingMode": "PAY_PER_REQUEST"
-}
-```
-
-### IAM Permissions Required
-
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "cognito-idp:AdminGetUser",
-        "cognito-idp:AdminSetUserPassword",
-        "cognito-idp:SignUp",
-        "cognito-idp:ConfirmSignUp",
-        "cognito-idp:InitiateAuth",
-        "cognito-idp:GetUser"
-      ],
-      "Resource": "arn:aws:cognito-idp:eu-north-1:893130088846:userpool/*"
-    },
-    {
-      "Effect": "Allow",
-      "Action": ["dynamodb:PutItem", "dynamodb:Scan", "dynamodb:Query"],
-      "Resource": "arn:aws:dynamodb:eu-north-1:893130088846:table/leaderboard"
-    },
-    {
-      "Effect": "Allow",
-      "Action": ["execute-api:ManageConnections"],
-      "Resource": "arn:aws:execute-api:eu-north-1:893130088846:gdjtdhxwkf/production/@connections/*"
-    }
-  ]
-}
-```
-
 ---
 
 ## 🏗️ Architecture
@@ -617,6 +559,7 @@ src/
 ### Local Development
 
 **Express Server:**
+
 ```bash
 npm install
 npm run build
@@ -624,6 +567,7 @@ npm start
 ```
 
 **Serverless Offline:**
+
 ```bash
 npm install
 npm run sls:offline
@@ -632,6 +576,7 @@ npm run sls:offline
 ### AWS Lambda Deployment
 
 **Using Serverless Framework directly:**
+
 ```bash
 # Install Serverless Framework globally
 npm install -g serverless
@@ -647,15 +592,13 @@ serverless remove --stage dev
 ```
 
 **Using npm scripts:**
+
 ```bash
 # Deploy to development
 npm run sls:deploy
 
 # Remove deployment
 npm run sls:remove
-
-# Invoke function locally
-npm run sls:invoke
 
 # Start local serverless environment
 npm run sls:offline
@@ -664,22 +607,25 @@ npm run sls:offline
 ### Available Serverless Commands
 
 **Development & Testing:**
+
 - `npm run sls:offline` - Start serverless offline (localhost:3000)
-- `npm run sls:invoke` - Invoke API function locally
-- `serverless offline --stage <stage>` - Start with specific stage
+- `sls offline --stage <stage>` - Start with specific stage
 
 **Deployment:**
+
 - `npm run sls:deploy` - Deploy to dev stage
-- `serverless deploy --stage <stage>` - Deploy to specific stage
-- `serverless deploy --stage prod` - Deploy to production
+- `sls deploy --stage <stage>` - Deploy to specific stage
+- `sls deploy --stage prod` - Deploy to production
 
 **Management:**
-- `npm run sls:remove` - Remove deployment from dev stage  
-- `serverless remove --stage <stage>` - Remove specific deployment
-- `serverless info --stage <stage>` - Get deployment information
-- `serverless logs --function api --stage <stage>` - View function logs
+
+- `npm run sls:remove` - Remove deployment from dev stage
+- `sls remove --stage <stage>` - Remove specific deployment
+- `sls info --stage <stage>` - Get deployment information
+- `sls logs --function api --stage <stage>` - View function logs
 
 **Function Invocation with Commands:**
+
 ```bash
 # Database Commands
 sls invoke --function job -d "db:init" --stage dev         # Initialize database
@@ -706,6 +652,7 @@ sls invoke --function job -d "help" --stage dev                  # Show help
 ```
 
 **Examples:**
+
 ```bash
 # Initialize database on production
 sls invoke --function job -d "db:init" --stage prod
@@ -727,6 +674,7 @@ sls invoke --function job -d "db:clear" --stage dev
 The application includes a comprehensive CLI with various commands for database management, AWS Cognito operations, and development utilities.
 
 ### Production-Safe Commands
+
 ```bash
 npm run cli db:init         # Initialize database tables
 npm run cli db:status       # Check database status
@@ -735,6 +683,7 @@ npm run cli help           # Show available commands
 ```
 
 ### Development Commands
+
 ⚠️ **Warning**: These commands can modify or delete data. Use with caution in development only.
 
 ```bash
@@ -759,6 +708,7 @@ npm run cli cognito:delete <email> # Delete specific user
 ```
 
 ### Usage Examples
+
 ```bash
 # Check if everything is set up correctly
 npm run cli system:status
