@@ -18,8 +18,12 @@ const envVarsSchema = Joi.object()
     
     // AWS Configuration
     AWS_REGION: Joi.string().default("eu-north-1"),
-    AWS_ACCESS_KEY_ID: Joi.string().default("AKIA474VTUGHK62Y2HHT"),
-    AWS_SECRET_ACCESS_KEY: Joi.string().default("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"),
+    AWS_ACCESS_KEY_ID: Joi.string().default("local"),
+    AWS_SECRET_ACCESS_KEY: Joi.string().default("local"),
+
+    // DynamoDB Local Configuration
+    DYNAMODB_LOCAL_ENDPOINT: Joi.string().default("http://localhost:8000"),
+    USE_LOCAL_DYNAMODB: Joi.boolean().default(true),
     
     // AWS Cognito Configuration
     COGNITO_USER_POOL_ID: Joi.string().default("eu-north-1_example"),
@@ -72,6 +76,10 @@ export default Object.freeze({
   AWS_REGION: envVars.AWS_REGION,
   AWS_ACCESS_KEY_ID: envVars.AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACCESS_KEY: envVars.AWS_SECRET_ACCESS_KEY,
+
+  // DynamoDB Local Configuration
+  DYNAMODB_LOCAL_ENDPOINT: envVars.DYNAMODB_LOCAL_ENDPOINT,
+  USE_LOCAL_DYNAMODB: envVars.USE_LOCAL_DYNAMODB,
   
   // AWS Cognito
   COGNITO_USER_POOL_ID: envVars.COGNITO_USER_POOL_ID,

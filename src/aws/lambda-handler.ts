@@ -35,7 +35,7 @@ const expressApp: APIGatewayProxyHandler = (
   }
 };
 
-const functionUrlStreamHandler: Handler = awslambda.streamifyResponse(
+const functionUrlStreamHandler = awslambda.streamifyResponse(
   async (
     event: APIGatewayProxyEvent & { rawPath: string },
     responseStream: LambdaResponseStream,

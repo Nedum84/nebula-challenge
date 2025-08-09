@@ -21,7 +21,10 @@
     "cli": "npm run build && cd dist && node src/cli/local.cli.js",
     "cache:cli": "NODE_ENV=local node dist/src/cli/cache.cli execute",
     "git:push": "git add . && git commit -m 'chore: more additions [skip test]' && git push",
-    "dc:up": "docker compose up -d"
+    "dc:up": "docker compose up -d",
+    "dc:down": "docker compose down",
+    "dc:logs": "docker compose logs -f",
+    "dc:restart": "docker compose restart"
   },
   "description": "",
   "dependencies": {
