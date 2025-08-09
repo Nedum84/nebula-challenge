@@ -41,8 +41,6 @@ export class CognitoMockService {
   static async register(data: RegisterData): Promise<{ message: string; user_id: string }> {
     const { email, preferred_username, name, password } = data;
 
-    console.log(`📝 [MOCK COGNITO] Registering user: ${email}`);
-
     // Check if user already exists
     for (const [, user] of mockUsers) {
       if (user.email === email) {
@@ -209,5 +207,6 @@ export class CognitoMockService {
 // Initialize with a test user for convenience
 CognitoMockService.createTestUser();
 CognitoMockService.createTestUser("admin@nebula.com", "AdminPass123!");
+// TODO: Add db seed all here
 
 export default CognitoMockService;

@@ -1,14 +1,14 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import authService from '../services/auth.service';
-import { 
-  User, 
-  LoginCredentials, 
-  RegisterData, 
-  ConfirmationData, 
-  AuthState 
-} from '../types/auth.types';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import authService from "../services/auth.service";
+import {
+  User,
+  LoginCredentials,
+  RegisterData,
+  ConfirmationData,
+  AuthState,
+} from "../types/auth.types";
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<void>;
@@ -23,7 +23,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             isLoading: false,
           });
         } else {
-          setAuthState(prev => ({ ...prev, isLoading: false }));
+          setAuthState((prev) => ({ ...prev, isLoading: false }));
         }
       } catch (error) {
         // Token is invalid or expired
@@ -79,21 +79,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const response = await authService.login(credentials);
       const { user, accessToken, idToken, refreshToken } = response.data;
-      
+
       const tokens = { accessToken, idToken, refreshToken };
       authService.saveAuthData(user, tokens);
-      
+
       setAuthState({
         user,
         tokens,
         isAuthenticated: true,
         isLoading: false,
       });
-      
-      toast.success('Login successful!');
-      navigate('/dashboard');
+
+      toast.success("Login successful!");
+      navigate("/dashboard");
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Login failed');
+      toast.error(error.response?.data?.message || "Login failed");
       throw error;
     }
   };
@@ -101,12 +101,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (data: RegisterData) => {
     try {
       await authService.register(data);
-      toast.success('Registration successful! Please check your email for verification code.');
-      navigate('/confirm', { state: { email: data.email } });
+      toast.success(
+        "Registration successful! Please check your email for verification code. For testing, use confirmation code: 123456"
+      );
+      navigate("/confirm", { state: { email: data.email } });
     } catch (error: any) {
-      const errorMessage = error.response?.data?.errors?.[0]?.message || 
-                          error.response?.data?.message || 
-                          'Registration failed';
+      const errorMessage =
+        error.response?.data?.errors?.[0]?.message ||
+        error.response?.data?.message ||
+        "Registration failed";
       toast.error(errorMessage);
       throw error;
     }
@@ -115,10 +118,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const confirmEmail = async (data: ConfirmationData) => {
     try {
       await authService.confirmEmail(data);
-      toast.success('Email confirmed successfully! Please login.');
-      navigate('/login');
+      toast.success("Email confirmed successfully! Please login.");
+      navigate("/login");
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Email confirmation failed');
+      toast.error(error.response?.data?.message || "Email confirmation failed");
       throw error;
     }
   };
@@ -131,14 +134,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       isAuthenticated: false,
       isLoading: false,
     });
-    toast.success('Logged out successfully');
-    navigate('/login');
+    toast.success("Logged out successfully");
+    navigate("/login");
   };
 
   const refreshAuth = async () => {
     try {
       const profileResponse = await authService.getProfile();
-      setAuthState(prev => ({
+      setAuthState((prev) => ({
         ...prev,
         user: profileResponse.data,
       }));

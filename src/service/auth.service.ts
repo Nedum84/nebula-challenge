@@ -48,8 +48,6 @@ export interface LoginData {
 
 const register = async (data: RegisterData): Promise<{ message: string; user_id?: string }> => {
   try {
-    console.log(config);
-
     // Use mock service for local development
     if (isLocal()) {
       return await CognitoMockService.register(data);
