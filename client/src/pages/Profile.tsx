@@ -44,6 +44,9 @@ const Profile: React.FC = () => {
   };
 
   const formatDate = (timestamp: number) => {
+    if (!timestamp || typeof timestamp !== 'number') {
+      return '—';
+    }
     return new Date(timestamp).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -121,7 +124,7 @@ const Profile: React.FC = () => {
                   <span className="text-sm font-medium text-gray-500">Best Score</span>
                 </div>
                 <span className="text-sm font-semibold text-gray-900">
-                  {bestScore ? bestScore.score.toLocaleString() : '—'}
+                  {bestScore && typeof bestScore.score === 'number' ? bestScore.score.toLocaleString() : '—'}
                 </span>
               </div>
               <div className="flex items-center justify-between">
@@ -139,7 +142,7 @@ const Profile: React.FC = () => {
                 <span className="text-sm font-semibold text-gray-900">
                   {userScores.length > 0
                     ? Math.round(
-                        userScores.reduce((sum, score) => sum + score.score, 0) / userScores.length
+                        userScores.reduce((sum, score) => sum + (typeof score.score === 'number' ? score.score : 0), 0) / userScores.length
                       ).toLocaleString()
                     : '—'}
                 </span>
@@ -177,19 +180,19 @@ const Profile: React.FC = () => {
                     <tr key={score.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-semibold text-gray-900">
-                          {score.score.toLocaleString()}
+                          {typeof score.score === 'number' ? score.score.toLocaleString() : '—'}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {formatDate(score.timestamp)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {score.score > 1000 && (
+                        {typeof score.score === 'number' && score.score > 1000 && (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                             🏆 High Score
                           </span>
                         )}
-                        {score.score === bestScore?.score && (
+                        {typeof score.score === 'number' && typeof bestScore?.score === 'number' && score.score === bestScore.score && (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 ml-2">
                             Personal Best
                           </span>

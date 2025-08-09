@@ -4,15 +4,18 @@ import config from "../config/config";
 import { CognitoUser, RegisterData, LoginData } from "./auth.service";
 
 // Mock user store for local development
-const mockUsers = new Map<string, {
-  userId: string;
-  email: string;
-  preferred_username: string;
-  name: string;
-  password: string;
-  confirmed: boolean;
-  confirmationCode?: string;
-}>();
+const mockUsers = new Map<
+  string,
+  {
+    userId: string;
+    email: string;
+    preferred_username: string;
+    name: string;
+    password: string;
+    confirmed: boolean;
+    confirmationCode?: string;
+  }
+>();
 
 export class CognitoMockService {
   // Generate a valid JWT token for local development
@@ -29,7 +32,7 @@ export class CognitoMockService {
       scope: "aws.cognito.signin.user.admin",
       auth_time: Math.floor(Date.now() / 1000),
       iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + (config.jwt.accessExpires * 60),
+      exp: Math.floor(Date.now() / 1000) + config.jwt.accessExpires * 60,
     };
 
     return jwt.sign(payload, config.JWT_SECRET);
@@ -37,6 +40,8 @@ export class CognitoMockService {
 
   static async register(data: RegisterData): Promise<{ message: string; user_id: string }> {
     const { email, preferred_username, name, password } = data;
+
+    console.log(`📝 [MOCK COGNITO] Registering user: ${email}`);
 
     // Check if user already exists
     for (const [, user] of mockUsers) {
@@ -76,9 +81,12 @@ export class CognitoMockService {
     };
   }
 
-  static async confirmSignUp(email: string, confirmationCode: string): Promise<{ message: string }> {
+  static async confirmSignUp(
+    email: string,
+    confirmationCode: string
+  ): Promise<{ message: string }> {
     const user = mockUsers.get(email);
-    
+
     if (!user) {
       const error = new Error("User not found");
       (error as any).name = "UserNotFoundException";
@@ -153,7 +161,7 @@ export class CognitoMockService {
   static async verifyAccessToken(accessToken: string): Promise<CognitoUser> {
     try {
       const decoded = jwt.verify(accessToken, config.JWT_SECRET) as any;
-      
+
       const cognitoUser: CognitoUser = {
         user_id: decoded.sub,
         email: decoded.email,
@@ -190,7 +198,7 @@ export class CognitoMockService {
   }
 
   static getAllUsers(): Array<{ email: string; confirmed: boolean; name: string }> {
-    return Array.from(mockUsers.values()).map(user => ({
+    return Array.from(mockUsers.values()).map((user) => ({
       email: user.email,
       confirmed: user.confirmed,
       name: user.name,

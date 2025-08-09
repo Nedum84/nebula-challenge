@@ -41,6 +41,9 @@ const Leaderboard: React.FC = () => {
   };
 
   const formatDate = (timestamp: number) => {
+    if (!timestamp || typeof timestamp !== 'number') {
+      return '—';
+    }
     return new Date(timestamp).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -125,7 +128,7 @@ const Leaderboard: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900 font-semibold">
-                        {entry.score.toLocaleString()}
+                        {typeof entry.score === 'number' ? entry.score.toLocaleString() : '—'}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

@@ -76,7 +76,7 @@ const Dashboard: React.FC = () => {
                 <dl>
                   <dt className="text-sm font-medium text-gray-500 truncate">Your Best Score</dt>
                   <dd className="text-2xl font-semibold text-gray-900">
-                    {userBestScore ? userBestScore.score.toLocaleString() : '—'}
+                    {userBestScore && typeof userBestScore.score === 'number' ? userBestScore.score.toLocaleString() : '—'}
                   </dd>
                 </dl>
               </div>
@@ -110,7 +110,7 @@ const Dashboard: React.FC = () => {
                 <dl>
                   <dt className="text-sm font-medium text-gray-500 truncate">Global Top Score</dt>
                   <dd className="text-2xl font-semibold text-gray-900">
-                    {topScore ? topScore.score.toLocaleString() : '—'}
+                    {topScore && typeof topScore.score === 'number' ? topScore.score.toLocaleString() : '—'}
                   </dd>
                 </dl>
               </div>
@@ -128,7 +128,7 @@ const Dashboard: React.FC = () => {
                 <dl>
                   <dt className="text-sm font-medium text-gray-500 truncate">Your Rank</dt>
                   <dd className="text-2xl font-semibold text-gray-900">
-                    {userBestScore && topScore && userBestScore.score === topScore.score ? '#1' : '—'}
+                    {userBestScore && topScore && typeof userBestScore.score === 'number' && typeof topScore.score === 'number' && userBestScore.score === topScore.score ? '#1' : '—'}
                   </dd>
                 </dl>
               </div>
