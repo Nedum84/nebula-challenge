@@ -9,6 +9,7 @@
     "start": "NODE_ENV=local ts-node -r tsconfig-paths/register src/index.ts",
     "dev": "NODE_ENV=local ts-node-dev -r tsconfig-paths/register --poll src/index.ts",
     "start:dev": "NODE_ENV=local concurrently \"npx tsc --watch\" \"nodemon -q dist/src/index.js\"",
+    "start:all": "concurrently -n \"EXPRESS,SERVERLESS,REACT\" -c \"green,blue,magenta\" \"npm run dev\" \"npm run sls:offline\" \"cd client && npm start\"",
     "test": "jest --runInBand --no-cache",
     "test:watch": "jest --runInBand --watchAll --no-cache",
     "sls:offline": "serverless offline --stage dev",

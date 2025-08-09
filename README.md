@@ -83,23 +83,36 @@ The server will start on http://localhost:5500
 
 ### Development Mode
 
-**Option 1: Express Server (Local)**
-For development with auto-reload:
+**Option 1: Start All Services (Recommended)**
+Start all three servers with a single command:
 
+```bash
+npm run start:all
+```
+
+This will concurrently start:
+- 🟢 Express Server (http://localhost:5500)
+- 🔵 Serverless Offline (http://localhost:3000)  
+- 🟣 React Frontend (http://localhost:4000)
+
+**Option 2: Individual Services**
+
+Express Server (Local):
 ```bash
 npm run dev
 ```
 
-**Option 2: Serverless Offline (Local AWS Lambda simulation)**
-Run locally with serverless-offline to simulate AWS Lambda environment:
-
+Serverless Offline (Local AWS Lambda simulation):
 ```bash
 npm run sls:offline
 # or
 sls offline
 ```
 
-This starts the API at http://localhost:3000 and simulates AWS Lambda functions locally.
+Frontend Only:
+```bash
+cd client && npm start
+```
 
 ## 📚 API Endpoints
 
