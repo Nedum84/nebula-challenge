@@ -6,6 +6,7 @@
   "author": "",
   "license": "ISC",
   "scripts": {
+    "server": "node src/index.js",
     "start": "NODE_ENV=local ts-node -r tsconfig-paths/register src/index.ts",
     "dev": "NODE_ENV=local ts-node-dev -r tsconfig-paths/register --poll src/index.ts",
     "start:dev": "NODE_ENV=local concurrently \"npx tsc --watch\" \"nodemon -q dist/src/index.js\"",
