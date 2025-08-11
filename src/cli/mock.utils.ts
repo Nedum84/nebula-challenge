@@ -1,4 +1,4 @@
-import CognitoMockService from "../service/cognito.mock";
+import CognitoMockService from "../mock/cognito.mock";
 import { isLocal } from "../utils/env.utils";
 
 export const mockCommands = {

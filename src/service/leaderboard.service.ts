@@ -1,6 +1,8 @@
 import { randomUUID } from "crypto";
 import { docClient, TABLES, type LeaderboardEntry } from "../database";
 import { PutCommand, ScanCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { isDev } from "../utils/env.utils";
+import leaderboardMockService from "../mock/leaderboard.mock";
 
 export interface SubmitScoreData {
   user_id: string;
@@ -14,6 +16,10 @@ export class LeaderboardService {
    */
   static async submitScore(data: SubmitScoreData): Promise<LeaderboardEntry> {
     try {
+      // Use mock service for development environment (not local)
+      if (isDev()) {
+        return await leaderboardMockService.submitScore(data);
+      }
       const entry: LeaderboardEntry = {
         id: randomUUID(),
         user_id: data.user_id,
@@ -39,6 +45,10 @@ export class LeaderboardService {
    */
   static async getTopScores(limit: number = 10): Promise<LeaderboardEntry[]> {
     try {
+      // Use mock service for development environment (not local)
+      if (isDev()) {
+        return await leaderboardMockService.getTopScores(limit);
+      }
       const response = await docClient.send(new ScanCommand({
         TableName: TABLES.LEADERBOARD.name,
         Limit: limit * 2, // Get more items to sort properly
@@ -65,6 +75,10 @@ export class LeaderboardService {
    */
   static async getUserScores(userId: string): Promise<LeaderboardEntry[]> {
     try {
+      // Use mock service for development environment (not local)
+      if (isDev()) {
+        return await leaderboardMockService.getUserScores(userId);
+      }
       // First try using GSI if available, otherwise fall back to scan
       let response;
       
@@ -110,6 +124,10 @@ export class LeaderboardService {
    */
   static async getUserBestScore(userId: string): Promise<LeaderboardEntry | null> {
     try {
+      // Use mock service for development environment (not local)
+      if (isDev()) {
+        return await leaderboardMockService.getUserBestScore(userId);
+      }
       const userScores = await this.getUserScores(userId);
       
       if (userScores.length === 0) {
@@ -138,6 +156,10 @@ export class LeaderboardService {
     totalPlayers: number;
   }> {
     try {
+      // Use mock service for development environment (not local)
+      if (isDev()) {
+        return await leaderboardMockService.getLeaderboardStats();
+      }
       const response = await docClient.send(new ScanCommand({
         TableName: TABLES.LEADERBOARD.name,
       }));
@@ -177,6 +199,10 @@ export class LeaderboardService {
     bestScore: number | null;
   }> {
     try {
+      // Use mock service for development environment (not local)
+      if (isDev()) {
+        return await leaderboardMockService.getUserRanking(userId);
+      }
       const userBestScore = await this.getUserBestScore(userId);
       if (!userBestScore) {
         return {

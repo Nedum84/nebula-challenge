@@ -10,7 +10,7 @@ import config from "../config/config";
 import { BadRequestError, UnauthorizedError } from "../api-response";
 import { cognitoClient } from "../database";
 import { isLocal } from "../utils/env.utils";
-import CognitoMockService from "./cognito.mock";
+import CognitoMockService from "../mock/cognito.mock";
 
 // Generate secret hash for Cognito client
 const generateSecretHash = (username: string): string => {

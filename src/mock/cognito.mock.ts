@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { randomUUID } from "crypto";
 import config from "../config/config";
-import { CognitoUser, RegisterData, LoginData } from "./auth.service";
+import { CognitoUser, RegisterData, LoginData } from "../service/auth.service";
 
 // Mock user store for local development
 const mockUsers = new Map<

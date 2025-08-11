@@ -3,6 +3,7 @@ import {
   PostToConnectionCommand,
 } from "@aws-sdk/client-apigatewaymanagementapi";
 import config from "../config/config";
+import { isDev } from "../utils/env.utils";
 
 const webSocketClient = new ApiGatewayManagementApiClient({
   endpoint: config.WEBSOCKET_CONNECTION_URL,
@@ -29,6 +30,11 @@ const sendHighScoreNotification = async (
   notification: HighScoreNotification
 ): Promise<boolean> => {
   try {
+    // Skip WebSocket operations in development environment
+    if (isDev()) {
+      console.log(`[WebSocket Mock] Would send to ${connectionId}:`, notification);
+      return true;
+    }
     const message = JSON.stringify(notification);
 
     const command = new PostToConnectionCommand({
