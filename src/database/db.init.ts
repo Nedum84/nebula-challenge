@@ -12,7 +12,6 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { CognitoIdentityProviderClient } from "@aws-sdk/client-cognito-identity-provider";
 import config from "../config/config";
-import { isLocal } from "../utils/env.utils";
 
 // DynamoDB Client Configuration
 const dynamoClient = new DynamoDBClient({
@@ -21,9 +20,6 @@ const dynamoClient = new DynamoDBClient({
     accessKeyId: config.AWS_ACCESS_KEY_ID,
     secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
   },
-  // ...(config.USE_LOCAL_DYNAMODB && {
-  //   endpoint: config.DYNAMODB_LOCAL_ENDPOINT,
-  // }),
 });
 
 // Document Client for easier operations
