@@ -20,7 +20,7 @@ const SubmitScore: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const response = await leaderboardService.submitScore({ score: scoreValue });
+      await leaderboardService.submitScore({ score: scoreValue });
       
       if (scoreValue > 1000) {
         toast.success('🎉 High score achieved! Great job!', {

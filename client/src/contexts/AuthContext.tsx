@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import authService from "../services/auth.service";
 import {
-  User,
   LoginCredentials,
   RegisterData,
   ConfirmationData,
