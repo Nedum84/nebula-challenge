@@ -31,10 +31,10 @@ const sendHighScoreNotification = async (
 ): Promise<boolean> => {
   try {
     // Skip WebSocket operations in development environment
-    if (isDev()) {
-      console.log(`[WebSocket Mock] Would send to ${connectionId}:`, notification);
-      return true;
-    }
+    // if (isDev()) {
+    //   console.log(`[WebSocket Mock] Would send to ${connectionId}:`, notification);
+    //   return true;
+    // }
     const message = JSON.stringify(notification);
 
     const command = new PostToConnectionCommand({
@@ -47,13 +47,13 @@ const sendHighScoreNotification = async (
     return true;
   } catch (error: any) {
     console.error("WebSocket notification error:", error);
-    
+
     // Connection might be stale
     if (error.statusCode === 410) {
       console.log(`Connection ${connectionId} is no longer available`);
       return false;
     }
-    
+
     throw new Error(`Failed to send WebSocket notification: ${error.message}`);
   }
 };
@@ -109,7 +109,7 @@ const addMockConnection = (connectionId: string): void => {
 };
 
 const removeMockConnection = (connectionId: string): void => {
-  mockConnections = mockConnections.filter(id => id !== connectionId);
+  mockConnections = mockConnections.filter((id) => id !== connectionId);
   console.log(`Mock connection removed: ${connectionId}`);
 };
 
@@ -123,7 +123,7 @@ const sendHighScoreNotificationToAll = async (
   score: number
 ): Promise<{ sent: number; failed: number }> => {
   const connections = getMockConnections();
-  
+
   if (connections.length === 0) {
     console.log("No active connections to send notifications");
     return { sent: 0, failed: 0 };

@@ -49,9 +49,9 @@ export interface LoginData {
 const register = async (data: RegisterData): Promise<{ message: string; user_id?: string }> => {
   try {
     // Use mock service for local and development environments
-    if (isLocal() || isDev()) {
-      return await CognitoMockService.register(data);
-    }
+    // if (isLocal() || isDev()) {
+    //   return await CognitoMockService.register(data);
+    // }
 
     const { email, preferred_username, name, password } = data;
 
@@ -105,9 +105,9 @@ const confirmSignUp = async (
 ): Promise<{ message: string }> => {
   try {
     // Use mock service for local and development environments
-    if (isLocal() || isDev()) {
-      return await CognitoMockService.confirmSignUp(email, confirmationCode);
-    }
+    // if (isLocal() || isDev()) {
+    //   return await CognitoMockService.confirmSignUp(email, confirmationCode);
+    // }
     const secretHash = generateSecretHash(email);
 
     const command = new ConfirmSignUpCommand({
@@ -138,9 +138,9 @@ const confirmSignUp = async (
 const login = async (data: LoginData): Promise<AuthResponse> => {
   try {
     // Use mock service for local and development environments
-    if (isLocal() || isDev()) {
-      return await CognitoMockService.login(data);
-    }
+    // if (isLocal() || isDev()) {
+    //   return await CognitoMockService.login(data);
+    // }
 
     const { email, password } = data;
     const secretHash = generateSecretHash(email);
@@ -241,9 +241,9 @@ const getUserDetails = async (accessToken: string): Promise<CognitoUser> => {
 
 const verifyAccessToken = async (accessToken: string): Promise<CognitoUser> => {
   // Use mock service for local and development environments
-  if (isLocal() || isDev()) {
-    return await CognitoMockService.verifyAccessToken(accessToken);
-  }
+  // if (isLocal() || isDev()) {
+  //   return await CognitoMockService.verifyAccessToken(accessToken);
+  // }
 
   return await getUserDetails(accessToken);
 };
